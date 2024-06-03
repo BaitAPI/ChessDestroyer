@@ -1,0 +1,91 @@
+<!DOCTYPE HTML>
+<html lang="de">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+        <title>Game | ChessDestroyer</title>
+        <link rel="stylesheet" href="css/main.css">
+        <link rel="stylesheet" href="css/game.css">
+
+        <!-- add Chessboard stylesheet via CDN: -->
+        <link rel="stylesheet"
+              href="https://unpkg.com/@chrisoakman/chessboard2@0.5.0/dist/chessboard2.min.css"
+              integrity="sha384-47VeTDpmy4yT21gKPXQcLQYQZwlmz27gEH5NTrOmTk3G/SGvMyltclOW/Q8uE+sL"
+              crossorigin="anonymous">
+    </head>
+    <body>
+        <div class="center">
+            <div class="center-middle">
+                <div id="board"></div>
+            </div>
+        </div>
+
+
+
+        <!-- add Chessboard JS via CDN: -->
+        <script src="https://unpkg.com/@chrisoakman/chessboard2@0.5.0/dist/chessboard2.min.js"
+                integrity="sha384-/KwQCjA1GWovZNV3QDVtvSMDzO4reGgarF/RqHipr7hIUElH3r5zNl9WEPPOBRIF"
+                crossorigin="anonymous">
+        </script>
+
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.js" integrity="sha512-oprzqYFJfo4Bx/nNEcSI0xo7ggJrLc+qQ6hrS3zV/Jn0C4dsg4gu+FXW/Vm0jP9CrV7e5e6dcLUYkg3imjfjbw==" crossorigin="anonymous" referrerpolicy="no-referrer">
+        </script>
+
+        <script>
+            const game = new Chess()
+
+            const config = {
+                draggable: true,
+                dropOffBoard: 'snapback',
+                moveSpeed: 'slow',
+                snapbackSpeed: 'slow',
+                snapSpeed: 'slow',
+                orientation: 'white',
+                position: game.fen(),
+                onDragStart,
+                onDrop
+            }
+
+            const board = Chessboard2('board', config)
+
+            function isWhitePiece (piece) { return /^w/.test(piece) }
+            function isBlackPiece (piece) { return /^b/.test(piece) }
+
+            function onDragStart (dragStartEvt) {
+                if (game.turn() === 'w' && !isWhitePiece(dragStartEvt.piece)) return false
+                if (game.turn() === 'b' && !isBlackPiece(dragStartEvt.piece)) return false
+
+                const legalMoves = game.moves({
+                    square: dragStartEvt.square,
+                    verbose: true
+                })
+
+                legalMoves.forEach((move) => {
+                    board.addCircle(move.to)
+                })
+            }
+
+            function onDrop (dropEvt) {
+                const move = game.move({
+                    from: dropEvt.source,
+                    to: dropEvt.target,
+                    promotion: 'q' //TODO: change behavior for production -> always promote to a queen for simplicity
+                })
+
+                board.clearCircles()
+
+                // Only move if legal
+                if (!move) {
+                    return 'snapback'
+                }
+            }
+
+            // update the board position after the piece snap
+            // for castling, en passant, pawn promotion
+            // function onSnapEnd () {
+            //   board.position(game.fen())
+            // }
+
+        </script>
+
+    </body>
+</html>
