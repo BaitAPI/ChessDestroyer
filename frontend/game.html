@@ -19,6 +19,18 @@
             </div>
         </div>
 
+        <div id="game-over-container">
+            <div class="center">
+                <div class="center-middle">
+                    <div class="game-over-content">
+                        <h1>Game Over</h1>
+                        <h2 id="over-description"></h2>
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
 
 
         <!-- add Chessboard JS via CDN: -->
@@ -42,7 +54,8 @@
                 orientation: 'white',
                 position: game.fen(),
                 onDragStart,
-                onDrop
+                onDrop,
+                onSnapEnd
             }
 
             const board = Chessboard2('board', config)
@@ -51,6 +64,8 @@
             function isBlackPiece (piece) { return /^b/.test(piece) }
 
             function onDragStart (dragStartEvt) {
+                checkGameOver();
+
                 if (game.turn() === 'w' && !isWhitePiece(dragStartEvt.piece)) return false
                 if (game.turn() === 'b' && !isBlackPiece(dragStartEvt.piece)) return false
 
@@ -77,15 +92,42 @@
                 if (!move) {
                     return 'snapback'
                 }
+
+                checkGameOver();
             }
 
             // update the board position after the piece snap
             // for castling, en passant, pawn promotion
-            // function onSnapEnd () {
-            //   board.position(game.fen())
-            // }
+            //TODO: fix castling (rook does not move at the moment)
+            function onSnapEnd () {
+               board.position(game.fen())
+            }
 
+            const overContainer = document.getElementById('game-over-container')
+
+            function checkGameOver() {
+                if (game.game_over()) {
+                    var overText = '';
+
+                    var moveColor = 'Weiss';
+                    if (game.turn() === 'b') {
+                        moveColor = 'Schwarz';
+                    }
+
+                    if (game.in_checkmate()) {
+                        overText = moveColor + ' ist Schachmatt';
+                    }
+
+                    if (game.in_draw()) {
+                        overText = 'Unentschieden';
+                    }
+
+                    const overDescription = document.getElementById('over-description');
+                    overDescription.innerText = overText;
+
+                    overContainer.style.display = "block";
+                }
+            }
         </script>
-
     </body>
 </html>

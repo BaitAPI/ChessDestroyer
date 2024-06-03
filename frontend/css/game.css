@@ -1,4 +1,37 @@
+#game-over-container {
+    height: 100%;
+    width: 100%;
+    position: fixed;
+    z-index: 1;
+    top: 0;
+    left: 0;
+    overflow: hidden;
+    background-color: rgba(0, 0, 0, 0.8);
+    transition: 0.7s;
+    display: none; /* TODO: revert to none after testing Game over overlay */
+    text-align: center;
+}
 
+.game-over-content {
+    width: 700px;
+    margin-left: auto;
+    margin-right: auto;
+    background-color: antiquewhite;
+}
+
+.game-over-content h1 {
+    height: 50%;
+    font-size: 5rem;
+    padding-top: 2rem;
+    font-family:Papyrus, fantasy;
+    margin-bottom: 0;
+}
+
+.game-over-content h2 {
+    font-size: 2rem;
+    margin-top: 0;
+    font-family:Papyrus, fantasy;
+}
 
 #board {
     width: 600px;
