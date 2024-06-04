@@ -15,7 +15,18 @@
     <body>
         <div class="center">
             <div class="center-middle">
-                <div id="board"></div>
+                <div class="center-inner grid-container">
+                    <div id="board"></div>
+                    <div id="opponent" class="players">
+                        <h3>Opponent Name</h3>
+                        <p> <span>Stärke:</span> Maggus Carlsen</p>
+                    </div>
+
+                    <div id="player" class="players">
+                        <h3>Player Name</h3>
+
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -25,7 +36,6 @@
                     <div class="game-over-content">
                         <h1>Game Over</h1>
                         <h2 id="over-description"></h2>
-
                     </div>
 
                 </div>
@@ -39,6 +49,7 @@
                 crossorigin="anonymous">
         </script>
 
+        <!-- add Chess JS via CDN: -->
         <script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.js" integrity="sha512-oprzqYFJfo4Bx/nNEcSI0xo7ggJrLc+qQ6hrS3zV/Jn0C4dsg4gu+FXW/Vm0jP9CrV7e5e6dcLUYkg3imjfjbw==" crossorigin="anonymous" referrerpolicy="no-referrer">
         </script>
 
@@ -99,12 +110,12 @@
                 opponentMove();
             }
 
-            function opponentMove() { //TODO: Fix first move
+            function opponentMove() { //TODO: Fix if opponent has first move
                 if (game.turn() === playerColorShort) return;
 
+                //TODO: Replace with connection to Backend
                 const legalMoves = game.moves();
                 if (legalMoves.length === 0) return; //No Moves == Game over
-
                 const random = Math.floor(Math.random() * legalMoves.length);
                 game.move(legalMoves[random]);
 
@@ -136,8 +147,28 @@
                     overDescription.innerText = overText;
 
                     overContainer.style.display = "block";
-                }
+                } else highlightTurn()
             }
+
+            const playerId = document.getElementById("player")
+            const opponentId = document.getElementById("opponent")
+
+            function highlightTurn() {
+                if (game.turn() === playerColorShort) {
+                    playerId.style.opacity = '100%';
+                    opponentId.style.opacity = '50%';
+                } else {
+                    playerId.style.opacity = '50%';
+                    opponentId.style.opacity = '100%';
+                }
+
+            }
+
+            function firstMove() {
+                highlightTurn()
+            }
+
+            firstMove()
         </script>
     </body>
 </html>
