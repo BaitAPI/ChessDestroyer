@@ -110,7 +110,7 @@
                 opponentMove();
             }
 
-            function opponentMove() { //TODO: Fix if opponent has first move
+            function opponentMove() {
                 if (game.turn() === playerColorShort) return;
 
                 //TODO: Replace with connection to Backend
@@ -166,6 +166,7 @@
 
             function firstMove() {
                 highlightTurn()
+                if (playerColorShort === "b") opponentMove()
             }
 
             firstMove()
