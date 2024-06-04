@@ -55,7 +55,6 @@
                 position: game.fen(),
                 onDragStart,
                 onDrop,
-                onSnapEnd
             }
 
             const board = Chessboard2('board', config)
@@ -93,14 +92,9 @@
                     return 'snapback'
                 }
 
-                checkGameOver();
-            }
+                board.position(game.fen())
 
-            // update the board position after the piece snap
-            // for castling, en passant, pawn promotion
-            //TODO: fix castling (rook does not move at the moment)
-            function onSnapEnd () {
-               board.position(game.fen())
+                checkGameOver();
             }
 
             const overContainer = document.getElementById('game-over-container')
