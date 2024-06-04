@@ -43,7 +43,10 @@
         </script>
 
         <script>
-            const game = new Chess()
+            const playerColor = "white"; //TODO: white or black depending on Settings get from URL
+            const playerColorShort = "w";
+
+            const game = new Chess();
 
             const config = {
                 draggable: true,
@@ -51,22 +54,20 @@
                 moveSpeed: 'slow',
                 snapbackSpeed: 'slow',
                 snapSpeed: 'slow',
-                orientation: 'white',
+                orientation: playerColor,
                 position: game.fen(),
                 onDragStart,
                 onDrop,
             }
 
-            const board = Chessboard2('board', config)
+            const board = Chessboard2('board', config);
 
-            function isWhitePiece (piece) { return /^w/.test(piece) }
-            function isBlackPiece (piece) { return /^b/.test(piece) }
+            let pieceRegex = new RegExp(`^${playerColorShort}`);
+
+            function isPiecePlayerColor (piece) { return pieceRegex.test(piece) }
 
             function onDragStart (dragStartEvt) {
-                checkGameOver();
-
-                if (game.turn() === 'w' && !isWhitePiece(dragStartEvt.piece)) return false
-                if (game.turn() === 'b' && !isBlackPiece(dragStartEvt.piece)) return false
+                if (game.turn() !== playerColorShort || !isPiecePlayerColor(dragStartEvt.piece)) return false
 
                 const legalMoves = game.moves({
                     square: dragStartEvt.square,
@@ -82,22 +83,37 @@
                 const move = game.move({
                     from: dropEvt.source,
                     to: dropEvt.target,
-                    promotion: 'q' //TODO: change behavior for production -> always promote to a queen for simplicity
+                    promotion: 'q' //TODO: change behavior for production -> at the moment always promote to a queen for simplicity
                 })
 
-                board.clearCircles()
+                board.clearCircles();
 
                 // Only move if legal
                 if (!move) {
                     return 'snapback'
                 }
 
-                board.position(game.fen())
+                board.position(game.fen());
+
+                checkGameOver();
+                opponentMove();
+            }
+
+            function opponentMove() { //TODO: Fix first move
+                if (game.turn() === playerColorShort) return;
+
+                const legalMoves = game.moves();
+                if (legalMoves.length === 0) return; //No Moves == Game over
+
+                const random = Math.floor(Math.random() * legalMoves.length);
+                game.move(legalMoves[random]);
+
+                board.position(game.fen());
 
                 checkGameOver();
             }
 
-            const overContainer = document.getElementById('game-over-container')
+            const overContainer = document.getElementById('game-over-container');
 
             function checkGameOver() {
                 if (game.game_over()) {
