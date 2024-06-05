@@ -1,9 +1,14 @@
+// The `engine` module contains the logic for the chess engine.
 mod engine;
 
-use rand::seq::SliceRandom;
+// Importing necessary modules and structures from the `rand` and `shakmaty` crates.
 use shakmaty::{Chess, Position};
+use rand::seq::SliceRandom;
+
+// Importing the `Engine` structure from the `engine` module.
 use engine::Engine;
 
+// Enum representing the difficulty levels of the game.
 #[derive(Clone)]
 pub enum DIFFICULTY {
     EASY,
@@ -12,6 +17,7 @@ pub enum DIFFICULTY {
 }
 
 impl DIFFICULTY {
+    // Method to parse the difficulty level into a depth for the chess engine.
     pub fn parse_depth(&self) -> i16 {
         match self {
             DIFFICULTY::EASY => 1,
@@ -19,6 +25,8 @@ impl DIFFICULTY {
             DIFFICULTY::HARD => 10
         }
     }
+
+    // Method to create a new `DIFFICULTY` from an integer.
     pub fn new(level: i16) -> Option<Self> {
         match level {
             1 => Some(DIFFICULTY::EASY),
@@ -27,6 +35,8 @@ impl DIFFICULTY {
             _ => None
         }
     }
+
+    // Method to parse the difficulty level into a player name.
     pub fn parse_player_name(&self) -> &'static str {
         match self {
             DIFFICULTY::EASY => "Jeff",
@@ -36,6 +46,7 @@ impl DIFFICULTY {
     }
 }
 
+// Enum representing the color of the player.
 #[derive(Clone)]
 pub enum COLOR {
     BLACK,
@@ -43,6 +54,7 @@ pub enum COLOR {
 }
 
 impl COLOR {
+    // Method to create a new `COLOR` from a character.
     pub fn new(character: char) -> Option<Self> {
         match character {
             'b' => Some(COLOR::BLACK),
@@ -55,6 +67,8 @@ impl COLOR {
             _ => None
         }
     }
+
+    // Method to parse the color into a character code.
     pub fn parse_code(&self)->char{
         match &self {
             COLOR::BLACK => 'b',
@@ -63,7 +77,7 @@ impl COLOR {
     }
 }
 
-
+// Structure representing a game of chess.
 pub struct Game {
     pub board: Chess,
     pub engine: Engine,
@@ -74,6 +88,7 @@ pub struct Game {
 }
 
 impl Game {
+    // Asynchronous method to create a new `Game`.
     pub async fn new(user_color: COLOR, difficulty: DIFFICULTY, username: String) -> Option<Self> {
         let mut board = Chess::default();
         let mut engine = Engine::new(difficulty.parse_depth())?;
@@ -89,4 +104,3 @@ impl Game {
         })
     }
 }
-
