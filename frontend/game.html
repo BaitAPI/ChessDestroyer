@@ -19,11 +19,11 @@
                     <div id="board"></div>
                     <div id="opponent" class="players">
                         <h3>Opponent Name</h3>
-                        <p> <span>Stärke:</span> Maggus Carlsen</p>
+                        <p> <span>Stärke:</span> Maggus Carlsen</p> <!-- TODO: Handlebar here -->
                     </div>
 
                     <div id="player" class="players">
-                        <h3>Player Name</h3>
+                        <h3>Player Name</h3> <!-- TODO: Handlebar here -->
 
                     </div>
                 </div>
@@ -42,6 +42,8 @@
             </div>
         </div>
 
+        <input id="hidden-color" type="hidden" value="white"> <!-- TODO: Handlebar here (black or white) -->
+
 
         <!-- add Chessboard JS via CDN: -->
         <script src="https://unpkg.com/@chrisoakman/chessboard2@0.5.0/dist/chessboard2.min.js"
@@ -56,12 +58,12 @@
         <script>
             const getParams = new URLSearchParams(window.location.search)
 
-            let playerColor = 'white';
-            let playerColorShort = 'w';
+            let playerColor = document.getElementById("hidden-color").value;
+            let playerColorShort = playerColor.charAt(0);
 
+            //TODO: remove start
             const color = getParams.get('color')
-
-            if (color) { //TODO: remove Random option, because random will be calculated in backend
+            if (color) {
                 if (color === 'r') {
                     let rand = Math.floor(Math.random() * 2)
                     playerColorShort = (rand === 0) ? 'w' : 'b'
@@ -71,6 +73,7 @@
 
                 playerColor = (playerColorShort === 'w')? 'white' : 'black';
             }
+            //TODO: remove end
 
             const game = new Chess();
 
@@ -122,13 +125,38 @@
                 board.position(game.fen());
 
                 checkGameOver();
-                opponentMove();
+                opponentMove(dropEvt.source, dropEvt.target);
             }
 
-            function opponentMove() {
+            async function fetchBoard(src, dest) {
+                const response = await fetch("/ChessDestroyer/move.html", { //TODO: correct path
+                    method: "POST",
+                    cache: "no-cache",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({move: src+dest})
+                })
+                return await response.text()
+            }
+
+            async function opponentMove(src, dest) {
                 if (game.turn() === playerColorShort) return;
 
+
+                const fen = await fetchBoard(src, dest)
+                try {
+                    game.load(fen)
+                    board.position(game.fen())
+                } catch (e) {
+                    console.log(e)
+                }
+
+
+
+
                 //TODO: Replace with connection to Backend
+                /*
                 const legalMoves = game.moves();
                 if (legalMoves.length === 0) return; //No Moves == Game over
                 const random = Math.floor(Math.random() * legalMoves.length);
@@ -136,33 +164,49 @@
 
                 board.position(game.fen());
 
-                checkGameOver();
+                 */
+
+                await checkGameOver();
             }
 
             const overContainer = document.getElementById('game-over-container');
 
-            function checkGameOver() {
+            async function checkGameOver() {
                 if (game.game_over()) {
-                    var overText = '';
+                    const response = await fetch('/ChessDestroyer/game_end.html') //TODO: correct path
+                    if (response.ok) {
+                        console.log(response.status) //TODO: remove
 
-                    var moveColor = 'Weiss';
-                    if (game.turn() === 'b') {
-                        moveColor = 'Schwarz';
+                        let overText = '';
+
+                        let moveColor = 'Weiss';
+                        if (game.turn() === 'b') {
+                            moveColor = 'Schwarz';
+                        }
+
+                        if (game.in_checkmate()) {
+                            overText = moveColor + ' ist Schachmatt';
+                        }
+
+                        if (game.in_draw()) {
+                            overText = 'Unentschieden';
+                        }
+
+                        const overDescription = document.getElementById('over-description');
+                        overDescription.innerText = overText;
+
+                        overContainer.style.display = "block";
+
+                        return;
+                    } else if (response.status === 406) {
+                        const fen = await response.text()
+                        game.load(fen)
+                        board.position(game.fen())
+                    } else {
+                        console.log('ERROR: Unexpected Status while fetching game over: ' + response.status)
                     }
-
-                    if (game.in_checkmate()) {
-                        overText = moveColor + ' ist Schachmatt';
-                    }
-
-                    if (game.in_draw()) {
-                        overText = 'Unentschieden';
-                    }
-
-                    const overDescription = document.getElementById('over-description');
-                    overDescription.innerText = overText;
-
-                    overContainer.style.display = "block";
-                } else highlightTurn()
+                }
+                highlightTurn()
             }
 
             const playerId = document.getElementById("player")
@@ -181,7 +225,7 @@
 
             function firstMove() {
                 highlightTurn()
-                if (playerColorShort === "b") opponentMove()
+                if (playerColorShort === "b") opponentMove(0, 0)
             }
 
             firstMove()
