@@ -134,9 +134,9 @@
                     method: "POST",
                     cache: "no-cache",
                     headers: {
-                        "Content-Type": "application/json"
+                        "Content-Type": "text/plain"
                     },
-                    body: JSON.stringify({move: src+dest})
+                    body: src+dest
                 })
                 return await response.text()
             }
@@ -173,7 +173,6 @@
                 if (game.game_over()) {
                     const response = await fetch('/game_end')
                     if (response.ok) {
-                        console.log(response.status) //TODO: remove
 
                         let overText = '';
 

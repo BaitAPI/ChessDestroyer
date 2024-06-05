@@ -30,8 +30,8 @@ async fn get() -> Redirect {
 // Route handler for "/game". It handles the creation of a new game and its session.
 // It takes an optional `new:session` query parameter and `game_settings` form data.
 // It uses `CookieJar` to manage session cookies and a `SessionHandler` to manage the game session.
-#[get("/game?<new_session>", data = "<game_settings>")]
-async fn get_game(new_session: Option<bool>, game_settings: Form<GetGameRequest>, cookie_jar: &CookieJar<'_>, session_handler: &State<SessionHandler>) -> Result<Template, (Status, &'static str)> {
+#[get("/game?<new_session>&<username>&<difficulty>&<color>")]
+async fn get_game(new_session: Option<bool>, username: String, difficulty: i16, color: char, cookie_jar: &CookieJar<'_>, session_handler: &State<SessionHandler>) -> Result<Template, (Status, &'static str)> {
     if let Some(_) = find_session(cookie_jar, session_handler).await {
         // The user has already a session
         if new_session.is_none() {
@@ -42,15 +42,15 @@ async fn get_game(new_session: Option<bool>, game_settings: Form<GetGameRequest>
         remove_session(cookie_jar, session_handler).await;
     }
     // Creates game instance
-    let color = COLOR::new(game_settings.color).ok_or((Status::BadRequest, "Your color submission is invalid"))?;
-    let difficulty = DIFFICULTY::new(game_settings.difficulty).ok_or((Status::BadRequest, "Your difficulty submission is invalid"))?;
-    let game = Game::new(color.clone(), difficulty.clone(), game_settings.username.clone()).await.ok_or((Status::InternalServerError, "Game could not be created"))?;
+    let color = COLOR::new(color).ok_or((Status::BadRequest, "Your color submission is invalid"))?;
+    let difficulty = DIFFICULTY::new(difficulty).ok_or((Status::BadRequest, "Your difficulty submission is invalid"))?;
+    let game = Game::new(color.clone(), difficulty.clone(), username.clone()).await.ok_or((Status::InternalServerError, "Game could not be created"))?;
 
     // Add game to the session handler and update cookies
     add_session(game, cookie_jar, session_handler).await;
     // Render game template with provided data
     Ok(Template::render("game", context! {
-        username: game_settings.username.clone(),
+        username: username.clone(),
         difficulty: difficulty.parse_player_name(),
         color: color.parse_code()
     }))
