@@ -1,0 +1,30 @@
+[package]
+name = "ChessDestroyer"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+shakmaty = "0.27.0"
+tokio = "1.38.0"
+rand = "0.8.5"
+anyhow = "1.0.86"
+
+[dependencies.rocket]
+version = "0.5.1"
+features = ["secrets", "json"]
+
+[dependencies.structsy]
+version = "0.5.2"
+features = ["derive"]
+
+[dependencies.uuid]
+version = "1.8.0"
+features = [
+    "v4",                # Lets you generate random UUIDs
+    "fast-rng",          # Use a faster (but still sufficiently random) RNG
+    "macro-diagnostics", # Enable better diagnostics for compile-time UUIDs
+]
+
+[dependencies.rocket_dyn_templates]
+version = "0.2.0"
+features = ["handlebars"]
