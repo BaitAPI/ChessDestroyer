@@ -1,6 +1,7 @@
 // The `engine` module contains the logic for the chess engine.
 mod engine;
 
+use std::time::Duration;
 // Importing necessary modules and structures from the `rand` and `shakmaty` crates.
 use shakmaty::{Chess, Position};
 use rand::seq::SliceRandom;
@@ -93,8 +94,10 @@ impl Game {
         let mut board = Chess::default();
         let mut engine = Engine::new(difficulty.parse_depth())?;
         if matches!(user_color, COLOR::BLACK) {
-            let mv = engine.gen_next_move(&board.clone()).await.ok()?;
-            board = board.play(&mv).ok()?;
+            tokio::time::sleep(Duration::from_millis(200)).await;
+            let board_clone = board.clone();
+            let mov = engine.gen_next_move(&board_clone).await.ok()?;
+            board.play_unchecked(&mov);
         };
         Some(Game {
             board,
