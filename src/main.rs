@@ -65,7 +65,6 @@ async fn get_game_end(cookie_jar: &CookieJar<'_>, session_handler: &State<Sessio
     let game = session.get().await;
 
     return if game.board.is_game_over() {
-        // TODO: Here a score will be stored
         remove_session(cookie_jar, session_handler).await;
         Ok(Status::Ok)
     } else {
