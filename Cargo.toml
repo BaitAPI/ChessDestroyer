@@ -4,13 +4,22 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-rocket = { version = "0.5.1", features = ["secrets", "json"] }
 shakmaty = "0.27.0"
 tokio = "1.38.0"
 rand = "0.8.5"
-serde = { version = "1.0.203", features = ["derive"] }
-structsy = { version = "0.5.2", features = ["derive"] }
 anyhow = "1.0.86"
+
+[dependencies.rocket]
+version = "0.5.1"
+features = ["secrets", "json"]
+
+[dependencies.structsy]
+version = "0.5.2"
+features = ["derive"]
+
+[dependencies.serde]
+version = "1.0.203"
+features = ["derive"]
 
 [dependencies.uuid]
 version = "1.8.0"
