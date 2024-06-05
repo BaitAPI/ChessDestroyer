@@ -19,11 +19,11 @@
                     <div id="board"></div>
                     <div id="opponent" class="players">
                         <h3>Opponent Name</h3>
-                        <p> <span>Stärke:</span> Maggus Carlsen</p> <!-- TODO: Handlebar here -->
+                        <p> <span>Stärke:</span> {{difficulty}}</p> <!-- TODO: Handlebar here -->
                     </div>
 
                     <div id="player" class="players">
-                        <h3>Player Name</h3> <!-- TODO: Handlebar here -->
+                        <h3>{{username}}</h3> <!-- TODO: Handlebar here -->
 
                     </div>
                 </div>
@@ -42,7 +42,7 @@
             </div>
         </div>
 
-        <input id="hidden-color" type="hidden" value="white"> <!-- TODO: Handlebar here (black or white) -->
+        <input id="hidden-color" type="hidden" value="{{color}}"> <!-- TODO: Handlebar here (black or white) -->
 
 
         <!-- add Chessboard JS via CDN: -->
@@ -58,8 +58,8 @@
         <script>
             const getParams = new URLSearchParams(window.location.search)
 
-            let playerColor = document.getElementById("hidden-color").value;
-            let playerColorShort = playerColor.charAt(0);
+            let playerColorShort = document.getElementById("hidden-color").value;
+            let playerColor = ((playerColorShort === "w")? "white" : "black");
 
             //TODO: remove start
             const color = getParams.get('color')
@@ -130,7 +130,7 @@
             }
 
             async function fetchBoard(src, dest) {
-                const response = await fetch("/ChessDestroyer/move.html", { //TODO: correct path
+                const response = await fetch("/move", {
                     method: "POST",
                     cache: "no-cache",
                     headers: {
@@ -171,7 +171,7 @@
 
             async function checkGameOver() {
                 if (game.game_over()) {
-                    const response = await fetch('/ChessDestroyer/game_end.html') //TODO: correct path
+                    const response = await fetch('/game_end')
                     if (response.ok) {
                         console.log(response.status) //TODO: remove
 
