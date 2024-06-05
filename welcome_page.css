@@ -1,0 +1,44 @@
+@media (prefers-color-scheme: dark) {
+    html { filter: invert(100%); }
+    img { filter: invert(100%); }
+}
+
+html{
+    background-color: darkgray;
+}
+
+main{
+    text-align: center;
+    margin-left: 10px;
+}
+
+.column {
+    float: left;
+    width: 33.33%;
+    text-align: center;
+}
+
+#screenshots{
+    margin-right: 10px;
+}
+
+footer{
+    text-align: center;
+}
+
+
+#features ul{
+    text-align: left;
+}
+
+/* Clear floats after the columns */
+.row:after {
+    content: "";
+    display: table;
+    clear: both;
+}
+@media screen and (max-width: 600px) {
+    .column {
+        width: 100%;
+    }
+}
