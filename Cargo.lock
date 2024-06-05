@@ -10,7 +10,6 @@ dependencies = [
  "rand",
  "rocket",
  "rocket_dyn_templates",
- "serde",
  "shakmaty",
  "structsy",
  "tokio",
