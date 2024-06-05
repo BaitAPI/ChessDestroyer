@@ -115,6 +115,7 @@
                     promotion: 'q' //TODO: change behavior for production -> at the moment always promote to a queen for simplicity
                 })
 
+
                 board.clearCircles();
 
                 // Only move if legal
@@ -143,7 +144,6 @@
             async function opponentMove(src, dest) {
                 if (game.turn() === playerColorShort) return;
 
-
                 const fen = await fetchBoard(src, dest)
                 try {
                     game.load(fen)
@@ -151,7 +151,6 @@
                 } catch (e) {
                     console.log(e)
                 }
-
 
 
 
@@ -163,7 +162,6 @@
                 game.move(legalMoves[random]);
 
                 board.position(game.fen());
-
                  */
 
                 await checkGameOver();
@@ -225,7 +223,7 @@
 
             function firstMove() {
                 highlightTurn()
-                if (playerColorShort === "b") opponentMove(0, 0)
+                if (playerColorShort === "b") opponentMove("0", "0")
             }
 
             firstMove()
