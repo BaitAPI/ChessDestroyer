@@ -24,7 +24,7 @@ use rocket::State;
 // Route handler for the root URL ("/"). Redirects to "/welcome_page.html"
 #[get("/")]
 async fn get() -> Redirect {
-    Redirect::to("/welcome_page.html")
+    Redirect::permanent("/welcome_page.html")
 }
 
 // Route handler for "/game". It handles the creation of a new game and its session.
