@@ -117,13 +117,31 @@ impl Game {
     }
 }
 
+/// This function attempts to find a move from a given UCI (Universal Chess Interface) command and a chess board.
+/// If the UCI command does not represent a valid move, the function will attempt to find a promotion move that matches the UCI command.
+///
+/// # Arguments
+///
+/// * `uci` - A reference to a UCI command.
+/// * `board` - A reference to a chess board.
+///
+/// # Returns
+///
+/// * `Option<Move>` - The found move, or `None` if no matching move or promotion move could be found.
 pub fn find_with_auto_promotion(uci: &Uci, board: &Chess)->Option<Move>{
+    // Try to convert the UCI command to a move on the given chess board.
     match uci.to_move(board) {
+        // If the UCI command represents a valid move, return the move.
         Ok(mov) => Some(mov),
+        // If the UCI command does not represent a valid move, try to find a promotion move that matches the UCI command.
         Err(_) => {
+            // Get all promotion moves on the chess board.
             let promotions = board.promotion_moves();
+            // Define a comparison function that checks if a move matches the UCI command.
             let compare = |x: &&Move| x.to().to_string() == uci.to_string()[2..] && x.from().is_some_and(|from|from.to_string() == uci.to_string()[..2]);
+            // Find a promotion move that matches the UCI command.
             let mov = promotions.iter().find(compare)?;
+            // If a matching promotion move is found, return the move.
             Some(mov.clone())
         }
     }
