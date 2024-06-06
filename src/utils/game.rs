@@ -19,11 +19,19 @@ pub enum DIFFICULTY {
 
 impl DIFFICULTY {
     // Method to parse the difficulty level into a depth for the chess engine.
-    pub fn parse_depth(&self) -> i16 {
+    pub fn parse_depth(&self) -> u16 {
         match self {
             DIFFICULTY::EASY => 1,
             DIFFICULTY::MEDIUM => 3,
             DIFFICULTY::HARD => 10
+        }
+    }
+
+    pub fn parse_elo(&self) -> u16{
+        match self {
+            DIFFICULTY::EASY => 400,
+            DIFFICULTY::MEDIUM => 900,
+            DIFFICULTY::HARD => 3500
         }
     }
 
@@ -92,7 +100,7 @@ impl Game {
     // Asynchronous method to create a new `Game`.
     pub async fn new(user_color: COLOR, difficulty: DIFFICULTY, username: String) -> Option<Self> {
         let mut board = Chess::default();
-        let mut engine = Engine::new(difficulty.parse_depth())?;
+        let mut engine = Engine::new(difficulty.parse_depth(), difficulty.parse_elo())?;
         if matches!(user_color, COLOR::BLACK) {
             tokio::time::sleep(Duration::from_millis(200)).await;
             let board_clone = board.clone();

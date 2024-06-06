@@ -8,7 +8,6 @@ mod utils;
 // Importing the public endpoints of our utils
 use crate::utils::session::{find_session, remove_session, SessionHandler, add_session};
 use crate::utils::game::{COLOR, DIFFICULTY, Game};
-use crate::utils::requests::{GetGameRequest};
 
 // Importing necessary modules and structures from the `rocket` and `shakmaty` crates.
 use rocket_dyn_templates::{context, Template};
@@ -17,7 +16,6 @@ use rocket::fs::{FileServer, relative};
 use rocket::http::{CookieJar, Status};
 use rocket::response::Redirect;
 use shakmaty::fen::Fen;
-use rocket::form::Form;
 use shakmaty::uci::Uci;
 use rocket::State;
 

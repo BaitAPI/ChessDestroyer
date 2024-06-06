@@ -18,11 +18,11 @@ pub struct Engine {
     child_guard: ChildGuard,
     sender: ChildStdin,
     receiver: Receiver<String>,
-    depth: i16,
+    depth: u16
 }
 
 impl Engine {
-    pub fn new(depth: i16) -> Option<Self> {
+    pub fn new(depth: u16, elo: u16) -> Option<Self> {
         let child = Command::new("stockfish")
             .stdin(Stdio::piped())
             .stdout(Stdio::piped())
@@ -43,14 +43,23 @@ impl Engine {
                 }
             }
         });
-
-        Some(Engine {
+        let mut engine = Engine {
             child_guard,
             sender: _stdin,
             receiver: rx,
             depth,
-        })
+        };
+        engine.set_elo(elo).ok()?;
+        Some(engine)
     }
+    fn set_elo(&mut self, elo: u16) ->Result<(),()>{
+        let uci_limit_cmd = "setoption name UCI_LimitStrength value true".to_string();
+        let uci_elo = format!("setoption name UCI_Elo value {}", elo);
+        let _ = self.send(uci_limit_cmd).map_err(|_|())?;
+        let _ = self.send(uci_elo).map_err(|_|())?;
+        Ok(())
+    }
+
     fn send(&mut self, message: String) -> Result<(), EngineError> {
         self.sender.write_all(format!("{}\n", message).as_bytes()).map_err(|_| EngineError::StdinWriteError)
     }
