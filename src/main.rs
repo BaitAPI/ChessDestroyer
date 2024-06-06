@@ -64,7 +64,7 @@ async fn get_game_end(cookie_jar: &CookieJar<'_>, session_handler: &State<Sessio
     let session = find_session(cookie_jar, session_handler).await.ok_or((Status::BadRequest, String::from("You are missing a session key")))?;
     let game = session.get().await;
 
-    return if game.board.is_game_over() {
+    return if game.board.is_game_over() || game.board.halfmoves()>=100 {
         remove_session(cookie_jar, session_handler).await;
         Ok(Status::Ok)
     } else {
