@@ -40,9 +40,9 @@ impl DIFFICULTY {
     // Method to parse the difficulty level into a player name.
     pub fn parse_player_name(&self) -> &'static str {
         match self {
-            DIFFICULTY::EASY => "Jeff",
-            DIFFICULTY::MEDIUM => "Bezos",
-            DIFFICULTY::HARD => "Fun"
+            DIFFICULTY::EASY => "Martin",
+            DIFFICULTY::MEDIUM => "Maggus Reischl",
+            DIFFICULTY::HARD => "Maggus Carlsen"
         }
     }
 }
