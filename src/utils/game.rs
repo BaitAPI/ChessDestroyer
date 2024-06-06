@@ -3,8 +3,9 @@ mod engine;
 
 use std::time::Duration;
 // Importing necessary modules and structures from the `rand` and `shakmaty` crates.
-use shakmaty::{Chess, Position};
+use shakmaty::{Chess, Move, Position};
 use rand::seq::SliceRandom;
+use shakmaty::uci::Uci;
 
 // Importing the `Engine` structure from the `engine` module.
 use engine::Engine;
@@ -113,5 +114,17 @@ impl Game {
             difficulty,
             username,
         })
+    }
+}
+
+pub fn find_with_auto_promotion(uci: &Uci, board: &Chess)->Option<Move>{
+    match uci.to_move(board) {
+        Ok(mov) => Some(mov),
+        Err(_) => {
+            let promotions = board.promotion_moves();
+            let compare = |x: &&Move| x.to().to_string() == uci.to_string()[2..] && x.from().is_some_and(|from|from.to_string() == uci.to_string()[..2]);
+            let mov = promotions.iter().find(compare)?;
+            Some(mov.clone())
+        }
     }
 }

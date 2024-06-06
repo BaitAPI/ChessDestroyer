@@ -5,12 +5,14 @@ use shakmaty::{Chess, EnPassantMode, Move};
 use shakmaty::fen::Fen;
 use shakmaty::uci::Uci;
 use tokio::sync::mpsc::{channel, Receiver};
+use crate::utils::game::find_with_auto_promotion;
 
 
 pub enum EngineError{
     StdinWriteError,
     StdoutReadError,
-    NextMoveError
+    NextMoveError,
+    PromotionError
 }
 
 pub struct Engine {
@@ -76,8 +78,8 @@ impl Engine {
         tokio::time::sleep(Duration::from_millis(100)).await;
         let mv = self.receive().await.map_err(|_| EngineError::NextMoveError)?;
 
-        let mv: Uci = mv.parse().map_err(|_| EngineError::NextMoveError)?;
-        let mov = mv.to_move(board).map_err(|_| EngineError::NextMoveError)?;
+        let uci: Uci = mv.parse().map_err(|_| EngineError::NextMoveError)?;
+        let mov = find_with_auto_promotion(&uci, &board).ok_or(EngineError::PromotionError)?;
         Ok(mov)
     }
 }
