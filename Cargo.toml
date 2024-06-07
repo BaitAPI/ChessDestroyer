@@ -8,6 +8,8 @@ shakmaty = "0.27.0"
 tokio = "1.38.0"
 rand = "0.8.5"
 anyhow = "1.0.86"
+rusqlite = "0.31.0"
+serde = { version = "1.0.203", features = ["derive"] }
 
 [dependencies.rocket]
 version = "0.5.1"
