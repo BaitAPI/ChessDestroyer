@@ -20,11 +20,11 @@ pub struct Engine {
     child_guard: ChildGuard,
     sender: ChildStdin,
     receiver: Receiver<String>,
-    depth: u16
+    depth: u32
 }
 
 impl Engine {
-    pub fn new(depth: u16, elo: u16) -> Option<Self> {
+    pub fn new(depth: u32, elo: u16) -> Option<Self> {
         let child = Command::new("stockfish")
             .stdin(Stdio::piped())
             .stdout(Stdio::piped())

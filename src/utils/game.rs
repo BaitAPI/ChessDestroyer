@@ -20,7 +20,7 @@ pub enum DIFFICULTY {
 
 impl DIFFICULTY {
     // Method to parse the difficulty level into a depth for the chess engine.
-    pub fn parse_depth(&self) -> u16 {
+    pub fn parse_depth(&self) -> u32 {
         match self {
             DIFFICULTY::EASY => 1,
             DIFFICULTY::MEDIUM => 3,
@@ -92,9 +92,10 @@ pub struct Game {
     pub board: Chess,
     pub engine: Engine,
     #[allow(dead_code)]
-    difficulty: DIFFICULTY,
+    pub difficulty: DIFFICULTY,
     #[allow(dead_code)]
-    username: String,
+    pub username: String,
+    pub user_color: char
 }
 
 impl Game {
@@ -113,6 +114,7 @@ impl Game {
             engine,
             difficulty,
             username,
+            user_color: user_color.parse_code()
         })
     }
 }
