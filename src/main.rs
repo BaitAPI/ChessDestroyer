@@ -7,8 +7,7 @@ mod utils;
 
 // Importing the public endpoints of our utils
 use crate::utils::session::{find_session, remove_session, SessionHandler, add_session};
-use crate::utils::game::{COLOR, DIFFICULTY, Game};
-use crate::utils::requests::{GetGameRequest};
+use crate::utils::game::{COLOR, DIFFICULTY, find_with_auto_promotion, Game};
 
 // Importing necessary modules and structures from the `rocket` and `shakmaty` crates.
 use rocket_dyn_templates::{context, Template};
@@ -17,7 +16,6 @@ use rocket::fs::{FileServer, relative};
 use rocket::http::{CookieJar, Status};
 use rocket::response::Redirect;
 use shakmaty::fen::Fen;
-use rocket::form::Form;
 use shakmaty::uci::Uci;
 use rocket::State;
 
@@ -86,8 +84,8 @@ async fn post_move(mov: String, cookie_jar: &CookieJar<'_>, session_handler: &St
     let curr_fen = Fen::from_position(game.board.clone(), EnPassantMode::Legal).to_string();
 
     // Applies user's move, if it is invalid, the current fen will be returned
-    let mov: Uci = mov.parse().map_err(|_| (Status::NotAcceptable, curr_fen.clone()))?;
-    let mov = mov.to_move(&game.board).map_err(|_| (Status::NotAcceptable, curr_fen.clone()))?;
+    let uci: Uci = mov.parse().map_err(|_| (Status::NotAcceptable, curr_fen.clone()))?;
+    let mov = find_with_auto_promotion(&uci, &game.board).ok_or((Status::BadRequest, String::from("Your move could not be evaluated!")))?;
     game.board.play_unchecked(&mov);
 
     // Generates and applies engine's move
