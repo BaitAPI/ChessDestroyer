@@ -12,6 +12,19 @@ body{
     overflow: hidden;
 }
 
+@media (max-width: 800px) {
+    body{
+        overflow: scroll;
+    }
+}
+
+@media (max-height: 800px) {
+    body{
+        overflow: scroll;
+    }
+
+}
+
 
 /* Style the links inside the navigation bar */
 .topnav a {
