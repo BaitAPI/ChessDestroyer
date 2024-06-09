@@ -2,16 +2,62 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Chessdestroyer 4000 - Landing</title>
+    <link rel="stylesheet" type="text/css" href="css/landing.css">
 </head>
 <body>
-    <form action="/game" method="get">
-        <input type="hidden" name="new_session" value="true">
-        <input type="text" name="username" value="username">
-        <input type="text" name="difficulty" value="10">
-        <input type="text" name="color" value="w">
 
-        <input type="submit">
-    </form>
+<header>
+    <nav>
+        <!-- Toolbar with "logo", + link to imprint -->
+
+        <div class="topnav">
+            <img src="assets/placeholder.png">
+            <a class="active" href="#home">Start</a>
+            <a href="imprint.html" id="nav-imprint">Imprint</a>
+        </div>
+    </nav>
+</header>
+
+<main>
+    <video autoplay muted loop id="myVideo">
+        <source src="assets/blured_brown.mp4" type="video/mp4">
+    </video>
+
+    <div class="content" id="description">
+        <h2>Chess Destroyer 4000 - Master your Game!</h2>
+        <p>Unleash your inner grandmaster with <b>Chessdestroyer 4000</b>, the ultimate web application for chess enthusiasts of all skill levels. Whether you're a beginner eager to learn the basics or a seasoned player looking to hone your strategies, Chessdestroyer 4000 offers a dynamic and challenging experience that caters to your needs.</p>
+        <p>With Chessdestroyer 4000, every game is a new opportunity to learn, grow, and dominate the board. Join the ranks of chess champions and elevate your game to new heights. Dive into the world of chess like never before and discover why Chessdestroyer 4000 is the preferred choice for players around the globe.</p><br>
+        <form action="settings.html">
+            <input type="submit" value="Play now!" id="play_btn">
+        </form>
+    </div>
+
+    <div class="content" id="features">
+        <h2>Key Features</h2>
+        <ul>
+            <b>Advanced AI Opponent</b>
+            <li>
+                Play against a cutting-edge chess AI that adapts to your skill level. From novice to expert, challenge yourself and improve your game with every match.</li>
+            <b>Adjustable Difficulty</b>
+            <li>
+                Customize your gaming experience by selecting the AI difficulty level. Fine-tune the challenge to match your current skill and push your limits as you improve.</li>
+            <b>Choose Your Color</b>
+            <li>
+                Take control of your game by choosing your starting color. Whether you prefer the strategic depth of black or the initiative of white, the choice is yours.</li>
+            <b>Multi-User Support</b>
+            <li>
+                Enjoy seamless gameplay with friends and other chess aficionados. Chessdestroyer 4000 supports multiple users simultaneously, making it easy to connect and compete with others.</li>
+            <b>Innovative Design</b>
+            <li>
+                Experience a sleek and modern interface designed to enhance your gameplay. The intuitive layout and responsive design ensure that you stay focused on your game, whether you're on a desktop or a mobile device.</li>
+            <b>Settings Customization</b>
+            <li>
+                Tailor your experience with a comprehensive settings page. Adjust the difficulty, select your starting color, and personalize your gameplay environment to suit your preferences.</li>
+        </ul>
+    </div>
+
+
+</main>
 </body>
 </html>
