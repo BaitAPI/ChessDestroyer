@@ -1,0 +1,231 @@
+<!DOCTYPE HTML>
+<html lang="de">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+        <title>Game | ChessDestroyer</title>
+        <link rel="stylesheet" href="css/main.css">
+        <link rel="stylesheet" href="css/game.css">
+
+        <!-- add Chessboard stylesheet via CDN: -->
+        <link rel="stylesheet"
+              href="https://unpkg.com/@chrisoakman/chessboard2@0.5.0/dist/chessboard2.min.css"
+              integrity="sha384-47VeTDpmy4yT21gKPXQcLQYQZwlmz27gEH5NTrOmTk3G/SGvMyltclOW/Q8uE+sL"
+              crossorigin="anonymous">
+    </head>
+    <body>
+        <div class="center">
+            <div class="center-middle">
+                <div class="center-inner grid-container">
+                    <div id="board"></div>
+                    <div id="opponent" class="players">
+                        <h3>Opponent Name</h3>
+                        <p> <span>Stärke:</span> {{difficulty}}</p> <!-- TODO: Handlebar here -->
+                    </div>
+
+                    <div id="player" class="players">
+                        <h3>{{username}}</h3> <!-- TODO: Handlebar here -->
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="game-over-container">
+            <div class="center">
+                <div class="center-middle">
+                    <div class="game-over-content">
+                        <h1>Game Over</h1>
+                        <h2 id="over-description"></h2>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <input id="hidden-color" type="hidden" value="{{color}}"> <!-- TODO: Handlebar here (black or white) -->
+
+
+        <!-- add Chessboard JS via CDN: -->
+        <script src="https://unpkg.com/@chrisoakman/chessboard2@0.5.0/dist/chessboard2.min.js"
+                integrity="sha384-/KwQCjA1GWovZNV3QDVtvSMDzO4reGgarF/RqHipr7hIUElH3r5zNl9WEPPOBRIF"
+                crossorigin="anonymous">
+        </script>
+
+        <!-- add Chess JS via CDN: -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.js" integrity="sha512-oprzqYFJfo4Bx/nNEcSI0xo7ggJrLc+qQ6hrS3zV/Jn0C4dsg4gu+FXW/Vm0jP9CrV7e5e6dcLUYkg3imjfjbw==" crossorigin="anonymous" referrerpolicy="no-referrer">
+        </script>
+
+        <script>
+            const getParams = new URLSearchParams(window.location.search)
+
+            let playerColorShort = document.getElementById("hidden-color").value;
+            let playerColor = ((playerColorShort === "w")? "white" : "black");
+
+            //TODO: remove start
+            const color = getParams.get('color')
+            if (color) {
+                if (color === 'r') {
+                    let rand = Math.floor(Math.random() * 2)
+                    playerColorShort = (rand === 0) ? 'w' : 'b'
+                } else {
+                    playerColorShort = color;
+                }
+
+                playerColor = (playerColorShort === 'w')? 'white' : 'black';
+            }
+            //TODO: remove end
+
+            const game = new Chess();
+
+            const config = {
+                draggable: true,
+                dropOffBoard: 'snapback',
+                moveSpeed: 'slow',
+                snapbackSpeed: 'slow',
+                snapSpeed: 'slow',
+                orientation: playerColor,
+                position: game.fen(),
+                onDragStart,
+                onDrop,
+            }
+
+            const board = Chessboard2('board', config);
+
+            let pieceRegex = new RegExp(`^${playerColorShort}`);
+
+            function isPiecePlayerColor (piece) { return pieceRegex.test(piece) }
+
+            function onDragStart (dragStartEvt) {
+                if (game.turn() !== playerColorShort || !isPiecePlayerColor(dragStartEvt.piece)) return false
+
+                const legalMoves = game.moves({
+                    square: dragStartEvt.square,
+                    verbose: true
+                })
+
+                legalMoves.forEach((move) => {
+                    board.addCircle(move.to)
+                })
+            }
+
+            function onDrop (dropEvt) {
+                const move = game.move({
+                    from: dropEvt.source,
+                    to: dropEvt.target,
+                    promotion: 'q' //TODO: change behavior for production -> at the moment always promote to a queen for simplicity
+                })
+
+
+                board.clearCircles();
+
+                // Only move if legal
+                if (!move) {
+                    return 'snapback'
+                }
+
+                board.position(game.fen());
+
+                checkGameOver();
+                opponentMove(dropEvt.source, dropEvt.target);
+            }
+
+            async function fetchBoard(src, dest) {
+                const response = await fetch("/move", {
+                    method: "POST",
+                    cache: "no-cache",
+                    headers: {
+                        "Content-Type": "text/plain"
+                    },
+                    body: src+dest
+                })
+                return await response.text()
+            }
+
+            async function opponentMove(src, dest) {
+                if (game.turn() === playerColorShort) return;
+
+                const fen = await fetchBoard(src, dest)
+                try {
+                    game.load(fen)
+                    board.position(game.fen())
+                } catch (e) {
+                    console.log(e)
+                }
+
+
+
+                //TODO: Replace with connection to Backend
+                /*
+                const legalMoves = game.moves();
+                if (legalMoves.length === 0) return; //No Moves == Game over
+                const random = Math.floor(Math.random() * legalMoves.length);
+                game.move(legalMoves[random]);
+
+                board.position(game.fen());
+                 */
+
+                await checkGameOver();
+            }
+
+            const overContainer = document.getElementById('game-over-container');
+
+            async function checkGameOver() {
+                if (game.game_over()) {
+                    const response = await fetch('/game_end')
+                    if (response.ok) {
+
+                        let overText = '';
+
+                        let moveColor = 'Weiss';
+                        if (game.turn() === 'b') {
+                            moveColor = 'Schwarz';
+                        }
+
+                        if (game.in_checkmate()) {
+                            overText = moveColor + ' ist Schachmatt';
+                        }
+
+                        if (game.in_draw()) {
+                            overText = 'Unentschieden';
+                        }
+
+                        const overDescription = document.getElementById('over-description');
+                        overDescription.innerText = overText;
+
+                        overContainer.style.display = "block";
+
+                        return;
+                    } else if (response.status === 406) {
+                        const fen = await response.text()
+                        game.load(fen)
+                        board.position(game.fen())
+                    } else {
+                        console.log('ERROR: Unexpected Status while fetching game over: ' + response.status)
+                    }
+                }
+                highlightTurn()
+            }
+
+            const playerId = document.getElementById("player")
+            const opponentId = document.getElementById("opponent")
+
+            function highlightTurn() {
+                if (game.turn() === playerColorShort) {
+                    playerId.style.opacity = '100%';
+                    opponentId.style.opacity = '50%';
+                } else {
+                    playerId.style.opacity = '50%';
+                    opponentId.style.opacity = '100%';
+                }
+
+            }
+
+            function firstMove() {
+                highlightTurn()
+                if (playerColorShort === "b") opponentMove("0", "0")
+            }
+
+            firstMove()
+        </script>
+    </body>
+</html>
