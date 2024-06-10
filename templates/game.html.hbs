@@ -183,6 +183,8 @@
             const playerId = document.getElementById("player")
             const opponentId = document.getElementById("opponent")
 
+            var squareClass = 'square-55d63'
+
             function highlightTurn() {
                 if (game.turn() === playerColorShort) {
                     playerId.style.opacity = '100%';
@@ -192,6 +194,24 @@
                     opponentId.style.opacity = '100%';
                 }
 
+                if (game.in_check()) {
+                    const kingCords = [].concat(...game.board()).map((p, index) => {
+                        if (p !== null && p.type === game.KING && p.color === game.turn()) {
+                            return index
+                        }
+                    }).filter(Number.isInteger).map((piece_index) => {
+                        const row = 'abcdefgh'[piece_index % 8]
+                        const column = Math.ceil((64 - piece_index) / 8)
+                        return row + column
+                    })
+
+                    const chessSquare = document.querySelector(`div[data-square-coord="${kingCords}"]`);
+                    chessSquare.classList.add("highlight-in-chess");
+
+                } else {
+                    const highlight = document.getElementsByClassName("highlight-in-chess")[0];
+                    highlight.classList.remove("highlight-in-chess");
+                }
             }
 
             function firstMove() {
