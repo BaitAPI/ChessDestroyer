@@ -19,11 +19,11 @@
                     <div id="board"></div>
                     <div id="opponent" class="players">
                         <h3>Opponent Name</h3>
-                        <p> <span>Stärke:</span> {{difficulty}}</p> <!-- TODO: Handlebar here -->
+                        <p> <span>Stärke:</span> {{difficulty}}</p>
                     </div>
 
                     <div id="player" class="players">
-                        <h3>{{username}}</h3> <!-- TODO: Handlebar here -->
+                        <h3>{{username}}</h3>
 
                     </div>
                 </div>
@@ -42,7 +42,7 @@
             </div>
         </div>
 
-        <input id="hidden-color" type="hidden" value="{{color}}"> <!-- TODO: Handlebar here (black or white) -->
+        <input id="hidden-color" type="hidden" value="{{color}}">
 
 
         <!-- add Chessboard JS via CDN: -->
@@ -60,20 +60,6 @@
 
             let playerColorShort = document.getElementById("hidden-color").value;
             let playerColor = ((playerColorShort === "w")? "white" : "black");
-
-            //TODO: remove start
-            const color = getParams.get('color')
-            if (color) {
-                if (color === 'r') {
-                    let rand = Math.floor(Math.random() * 2)
-                    playerColorShort = (rand === 0) ? 'w' : 'b'
-                } else {
-                    playerColorShort = color;
-                }
-
-                playerColor = (playerColorShort === 'w')? 'white' : 'black';
-            }
-            //TODO: remove end
 
             const game = new Chess();
 
@@ -152,18 +138,6 @@
                     console.log(e)
                 }
 
-
-
-                //TODO: Replace with connection to Backend
-                /*
-                const legalMoves = game.moves();
-                if (legalMoves.length === 0) return; //No Moves == Game over
-                const random = Math.floor(Math.random() * legalMoves.length);
-                game.move(legalMoves[random]);
-
-                board.position(game.fen());
-                 */
-
                 await checkGameOver();
             }
 
@@ -209,6 +183,8 @@
             const playerId = document.getElementById("player")
             const opponentId = document.getElementById("opponent")
 
+            var squareClass = 'square-55d63'
+
             function highlightTurn() {
                 if (game.turn() === playerColorShort) {
                     playerId.style.opacity = '100%';
@@ -218,6 +194,24 @@
                     opponentId.style.opacity = '100%';
                 }
 
+                if (game.in_check()) {
+                    const kingCords = [].concat(...game.board()).map((p, index) => {
+                        if (p !== null && p.type === game.KING && p.color === game.turn()) {
+                            return index
+                        }
+                    }).filter(Number.isInteger).map((piece_index) => {
+                        const row = 'abcdefgh'[piece_index % 8]
+                        const column = Math.ceil((64 - piece_index) / 8)
+                        return row + column
+                    })
+
+                    const chessSquare = document.querySelector(`div[data-square-coord="${kingCords}"]`);
+                    chessSquare.classList.add("highlight-in-chess");
+
+                } else {
+                    const highlight = document.getElementsByClassName("highlight-in-chess")[0];
+                    highlight.classList.remove("highlight-in-chess");
+                }
             }
 
             function firstMove() {
