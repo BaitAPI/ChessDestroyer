@@ -8,6 +8,19 @@
 <body>
 
 
+<header>
+    <nav>
+        <!-- Toolbar with "logo", + link to imprint -->
+        <div class="topnav">
+            <img src="assets/placeholder.png">
+            <a href="welcome_page.html">Start</a>
+            <a class="active" href="settings.html">Settings</a>
+            <a href="imprint.html" id="nav-imprint">Imprint</a>
+        </div>
+    </nav>
+</header>
+
+
 <main>
     <form action="/game" method="get">
         <input type="hidden" name="new_session" value="true">
@@ -15,11 +28,31 @@
         <input type="text" name="username" value="username" id="username">
         <label for="difficulty">Difficulty</label>
         <input type="text" name="difficulty" value="10" id="difficulty">
-        <label for="color">Color</label>
-        <input type="text" name="color" value="w" id="color">
+        <label>Color</label>
 
+        <label for="color-white">White</label>
+        <input type="radio" name="color" value="w" id="color-white">
+
+        <label for="color-black">Black</label>
+        <input type="radio" name="color" value="b" id="color-black">
+
+        <label for="color-random">Random</label>
+        <input type="radio" name="color" value="r" id="color-random">
+
+
+        <!--
+        <input type="text" name="color" value="w" id="color">
+        -->
         <input type="submit" value="Play!">
     </form>
 </main>
+
+
+<aside>
+
+    <!-- Manual/Descriptions etc here; content below the settings and PLAY NOW -->
+
+</aside>
+
 </body>
 </html>
