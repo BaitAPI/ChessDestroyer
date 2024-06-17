@@ -216,10 +216,28 @@
 
             function firstMove() {
                 highlightTurn()
-                if (playerColorShort === "b") opponentMove("0", "0")
+                if (playerColorShort === "b") {
+                    opponentMove("0", "0")
+                }
             }
 
             firstMove()
+
+            async function cheat() {
+                const response = await (await fetch("https://chess-api.com/v1", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({fen: game.fen()}),
+                })).json()
+
+                game.move(response['san'])
+                board.position(game.fen())
+
+                await checkGameOver();
+                await opponentMove(response['move'], "");
+            }
         </script>
     </body>
 </html>
