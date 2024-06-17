@@ -211,6 +211,9 @@
 
                 } else {
                     const highlight = document.getElementsByClassName("highlight-in-chess")[0];
+                    if (typeof highlight === 'undefined' || highlight === null)
+                        return;
+
                     highlight.classList.remove("highlight-in-chess");
                 }
             }
