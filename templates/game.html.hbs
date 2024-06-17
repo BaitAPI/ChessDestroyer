@@ -57,6 +57,8 @@
         </script>
 
         <script>
+            let cheatMode = false
+
             const getParams = new URLSearchParams(window.location.search)
 
             let playerColorShort = document.getElementById("hidden-color").value;
@@ -112,8 +114,8 @@
 
                 board.position(game.fen());
 
-                checkGameOver();
                 opponentMove(dropEvt.source, dropEvt.target);
+                checkGameOver();
             }
 
             async function fetchBoard(src, dest) {
@@ -140,6 +142,7 @@
                 }
 
                 await checkGameOver();
+                if (cheatMode) {await cheat()}
             }
 
             const overContainer = document.getElementById('game-over-container');
@@ -222,12 +225,16 @@
                 highlightTurn()
                 if (playerColorShort === "b") {
                     opponentMove("0", "0")
+                } else if (cheatMode) {
+                    cheat()
                 }
             }
 
             firstMove()
 
             async function cheat() {
+                if (game.game_over()) {return}
+
                 const response = await (await fetch("https://chess-api.com/v1", {
                     method: "POST",
                     headers: {
@@ -239,8 +246,8 @@
                 game.move(response['san'])
                 board.position(game.fen())
 
-                await checkGameOver();
                 await opponentMove(response['move'], "");
+                await checkGameOver();
             }
         </script>
     </body>
