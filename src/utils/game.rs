@@ -104,9 +104,8 @@ impl Game {
         let mut board = Chess::default();
         let mut engine = Engine::new(difficulty.parse_depth(), difficulty.parse_elo())?;
         if matches!(user_color, COLOR::BLACK) {
-            tokio::time::sleep(Duration::from_millis(300)).await;
-            let board_clone = board.clone();
-            let mov = engine.gen_next_move(&board_clone).await.ok()?;
+            let uci: Uci = "d2d4".parse().ok()?;
+            let mov: Move = uci.to_move(&board).ok()?;
             board.play_unchecked(&mov);
         };
         Some(Game {
