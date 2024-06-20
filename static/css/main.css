@@ -25,5 +25,18 @@ html {
 .grid-container {
     display: grid;
     gap: 50px;
+    grid-template-columns: repeat(3, 1fr); /* Define initial grid layout */
+}
 
+@media (max-width: 1024px) {
+    .grid-container {
+        grid-template-columns: repeat(2, 1fr); /* Change to 2 columns */
+    }
+}
+
+@media (max-width: 768px) {
+    .grid-container {
+        grid-template-columns: 1fr; /* Change to 1 column */
+        gap: 20px;
+    }
 }

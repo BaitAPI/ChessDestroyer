@@ -13,7 +13,8 @@
 }
 
 .game-over-content {
-    width: 700px;
+    width: 90%;
+    max-width: 700px;
     margin-left: auto;
     margin-right: auto;
     background-color: antiquewhite;
@@ -63,7 +64,6 @@
     font-size: 3rem;
     padding-bottom: 0;
     margin-bottom: 0;
-
 }
 
 .players p {
@@ -79,4 +79,33 @@
 
 .highlight-in-chess {
     box-shadow: inset 0 0 3px 3px darkred;
+}
+
+@media (max-width: 780px) {
+    .grid-container {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+
+    #board {
+        grid-column-start: 1;
+        grid-column-end: 2;
+        grid-row-start: 1;
+        grid-row-end: 2;
+    }
+
+    #opponent, #player {
+        grid-column-start: 1;
+        grid-column-end: 2;
+        grid-row-start: auto;
+        grid-row-end: auto;
+    }
+
+    #opponent {
+        grid-row-start: 2;
+    }
+
+    #player {
+        grid-row-start: 3;
+    }
 }
