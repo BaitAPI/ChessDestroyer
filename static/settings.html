@@ -20,37 +20,38 @@
     </nav>
 </header>
 
-
-<div class="card-container">
-
-    <div class="cards"><h1>1</h1></div>
-    <div class="cards"><h1>2</h1></div>
-    <div class="cards"><h1>3</h1></div>
-
-</div>
 <main>
+
     <form action="/game" method="get">
-        <input type="hidden" name="new_session" value="true">
-        <label for="username">Username</label>
-        <input type="text" name="username" value="username" id="username">
-        <label for="difficulty">Difficulty</label>
-        <input type="text" name="difficulty" value="10" id="difficulty">
-        <label>Color</label>
 
-        <label for="color-white">White</label>
-        <input type="radio" name="color" value="w" id="color-white">
+    <div class="card-container">
 
-        <label for="color-black">Black</label>
-        <input type="radio" name="color" value="b" id="color-black">
+        <div class="cards">
+            <input type="hidden" name="new_session" value="true">
+            <label for="username">Username</label>
+            <input type="text" name="username" value="username" id="username">
+        </div>
+        <div class="cards">
+            <label for="difficulty">Difficulty</label>
+            <input type="text" name="difficulty" value="10" id="difficulty">
+        </div>
+        <div class="cards">
 
-        <label for="color-random">Random</label>
-        <input type="radio" name="color" value="r" id="color-random">
+            <label>Color</label><br>
+            <label for="color-white">White</label>
+            <input type="radio" name="color" value="w" id="color-white">
+            <label for="color-black">Black</label>
+            <input type="radio" name="color" value="b" id="color-black">
 
+            <label for="color-random">Random</label>
+            <input type="radio" name="color" value="r" id="color-random">
+        </div>
 
-        <!--
-        <input type="text" name="color" value="w" id="color">
-        -->
-        <input type="submit" value="Play!">
+        <div class="cards">
+            <input type="submit" value="Play!">
+        </div>
+
+    </div>
     </form>
 </main>
 
