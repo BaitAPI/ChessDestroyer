@@ -1,6 +1,8 @@
 body{
     margin: 0;
     padding: 0;
+    height: 100vh;
+    overflow: hidden;
 }
 
 .topnav {
@@ -45,4 +47,38 @@ body{
 
 main form{
     display: block;
+}
+
+.card-container {
+    width: 100%;
+    height: 500px;
+    border: 1px solid white;
+    border-radius: 5px;
+    display: flex;
+}
+
+.cards {
+    position: relative;
+    left: 0;
+    width: 80px;
+    border-radius: 5px;
+    padding: 8px;
+    height: auto;
+    background-color: white;
+    transition: .5s all;
+    flex: 1;
+    font-size: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+.cards{
+    flex: 1;  cursor: pointer;
+    background: #04AA6D;
+    border: 1px solid white;
+}
+.cards:hover {
+    flex: 3;
 }
