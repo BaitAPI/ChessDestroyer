@@ -5,22 +5,16 @@ use shakmaty::{Chess, EnPassantMode, Move};
 use shakmaty::fen::Fen;
 use shakmaty::uci::Uci;
 use tokio::sync::mpsc::{channel, Receiver};
+use crate::utils::errors::internal::InternalResult;
 use crate::utils::game::find_with_auto_promotion;
 
-
-pub enum EngineError{
-    StdinWriteError,
-    StdoutReadError,
-    NextMoveError,
-    PromotionError
-}
-
 pub struct Engine {
+    // Dead code needs to be allowed here, because the child guard is needed to ensure subprocess kill after drop
     #[allow(dead_code)]
     child_guard: ChildGuard,
     sender: ChildStdin,
     receiver: Receiver<String>,
-    depth: u32
+    depth: u32,
 }
 
 impl Engine {
@@ -54,32 +48,32 @@ impl Engine {
         engine.set_elo(elo).ok()?;
         Some(engine)
     }
-    fn set_elo(&mut self, elo: u16) ->Result<(),()>{
+    fn set_elo(&mut self, elo: u16) -> InternalResult<()> {
         let uci_limit_cmd = "setoption name UCI_LimitStrength value true".to_string();
         let uci_elo = format!("setoption name UCI_Elo value {}", elo);
-        let _ = self.send(uci_limit_cmd).map_err(|_|())?;
-        let _ = self.send(uci_elo).map_err(|_|())?;
+        let _ = self.send(uci_limit_cmd).map_err(|_| "ENGINE: Could not send message to subprocess")?;
+        let _ = self.send(uci_elo).map_err(|_| "ENGINE: Could not send message to subprocess")?;
         Ok(())
     }
 
-    fn send(&mut self, message: String) -> Result<(), EngineError> {
-        self.sender.write_all(format!("{}\n", message).as_bytes()).map_err(|_| EngineError::StdinWriteError)
+    fn send(&mut self, message: String) -> InternalResult<()> {
+        self.sender.write_all(format!("{}\n", message).as_bytes()).map_err(|_| "ENGINE: Could not write to stdout")
     }
-    async fn receive(&mut self) -> Result<String, EngineError> {
-        self.receiver.recv().await.ok_or(EngineError::StdoutReadError)
+    async fn receive(&mut self) -> InternalResult<String> {
+        self.receiver.recv().await.ok_or("ENGINE: Could not receive Engine stdout")
     }
-    pub async fn gen_next_move(&mut self, board: &Chess) -> Result<Move, EngineError> {
+    pub async fn gen_next_move(&mut self, board: &Chess) -> InternalResult<Move> {
         let fen = Fen::from_position(board.clone(), EnPassantMode::Legal);
         let fen_cmd = format!("position fen {}", fen.to_string());
         let depth_cmd = format!("go depth {}", self.depth);
 
-        let _ = self.send(fen_cmd).map_err(|_| EngineError::NextMoveError)?;
-        let _ = self.send(depth_cmd).map_err(|_| EngineError::NextMoveError)?;
+        let _ = self.send(fen_cmd).map_err(|_| "ENGINE: Could not send fen command")?;
+        let _ = self.send(depth_cmd).map_err(|_| "ENGINE: Could not send depth command")?;
         tokio::time::sleep(Duration::from_millis(100)).await;
-        let mv = self.receive().await.map_err(|_| EngineError::NextMoveError)?;
+        let mv = self.receive().await.map_err(|_| "ENGINE: Could not receive generated move")?;
 
-        let uci: Uci = mv.parse().map_err(|_| EngineError::NextMoveError)?;
-        let mov = find_with_auto_promotion(&uci, &board).ok_or(EngineError::PromotionError)?;
+        let uci: Uci = mv.parse().map_err(|_| "ENGINE: Generated move is no valid UCI")?;
+        let mov = find_with_auto_promotion(&uci, &board).ok_or("ENGINE: Generated move is not valid")?;
         Ok(mov)
     }
 }

@@ -20,6 +20,8 @@ use shakmaty::fen::Fen;
 use shakmaty::uci::Uci;
 use rocket::State;
 use crate::utils::db::{add_score_entry, DB, get_top, ScoreEntry, set_score_schema};
+use crate::utils::errors::external::{FenResponse, OkOrResponse, Response};
+use crate::utils::requests::GameSettings;
 
 // Route handler for the root URL ("/"). Redirects to "/welcome_page.html"
 #[get("/")]
@@ -30,11 +32,11 @@ async fn get() -> Redirect {
 // Route handler for "/game". It handles the creation of a new game and its session.
 // It takes an optional `new:session` query parameter and `game_settings` form data.
 // It uses `CookieJar` to manage session cookies and a `SessionHandler` to manage the game session.
-#[get("/game?<new_session>&<username>&<difficulty>&<color>")]
-async fn get_game(new_session: Option<bool>, username: String, difficulty: i16, color: char, cookie_jar: &CookieJar<'_>, session_handler: &State<SessionHandler>) -> Result<Template, (Status, &'static str)> {
+#[get("/game?<game_settings..>")]
+async fn get_game(game_settings: GameSettings, cookie_jar: &CookieJar<'_>, session_handler: &State<SessionHandler>) -> Response<Template> {
     if let Some(_) = find_session(cookie_jar, session_handler).await {
-        // The user has already a session
-        if new_session.is_none() {
+        // The user already has a session
+        if game_settings.new_session.is_none() {
             // The user receives an error, because he was not intentionally requesting a new game
             return Err((Status::BadRequest, "There is already a Session running, please retry!"));
         }
@@ -42,15 +44,15 @@ async fn get_game(new_session: Option<bool>, username: String, difficulty: i16, 
         remove_session(cookie_jar, session_handler).await;
     }
     // Creates game instance
-    let color = COLOR::new(color).ok_or((Status::BadRequest, "Your color submission is invalid"))?;
-    let difficulty = DIFFICULTY::new(difficulty).ok_or((Status::BadRequest, "Your difficulty submission is invalid"))?;
-    let game = Game::new(color.clone(), difficulty.clone(), username.clone()).await.ok_or((Status::InternalServerError, "Game could not be created"))?;
+    let color = COLOR::new(game_settings.color).ok_or((Status::BadRequest, "Your color submission is invalid"))?;
+    let difficulty = DIFFICULTY::new(game_settings.difficulty).ok_or((Status::BadRequest, "Your difficulty submission is invalid"))?;
+    let game = Game::new(color.clone(), difficulty.clone(), game_settings.username.clone()).await.ok_or((Status::InternalServerError, "Game could not be created"))?;
 
     // Add game to the session handler and update cookies
     add_session(game, cookie_jar, session_handler).await;
     // Render game template with provided data
     Ok(Template::render("game", context! {
-        username: username.clone(),
+        username: game_settings.username.clone(),
         difficulty: difficulty.parse_player_name(),
         color: color.parse_code()
     }))
@@ -59,19 +61,19 @@ async fn get_game(new_session: Option<bool>, username: String, difficulty: i16, 
 // Route handler for "/game_end". It checks if the current game session is over.
 // It uses `CookieJar` to manage session cookies and a `SessionHandler` to manage sessions.
 #[get("/game_end")]
-async fn get_game_end(cookie_jar: &CookieJar<'_>, session_handler: &State<SessionHandler>, db: &State<DB>) -> Result<Status, (Status, String)> {
+async fn get_game_end(cookie_jar: &CookieJar<'_>, session_handler: &State<SessionHandler>, db: &State<DB>) -> OkOrResponse<String> {
     // Grabs the users session if it exists
     let session = find_session(cookie_jar, session_handler).await.ok_or((Status::BadRequest, String::from("You are missing a session key")))?;
     let game = session.get().await;
 
-    return if game.board.is_game_over() || game.board.halfmoves()>=100 {
+    return if game.board.is_game_over() || game.board.halfmoves() >= 100 {
         let board = &game.board;
         let outcome = board.outcome().ok_or((Status::InternalServerError, String::from("Contradictory game conditions")))?;
-        if let Some(winner) = outcome.winner(){
-            if game.user_color.to_string().eq(&winner.to_string()[..1]).clone(){
+        if let Some(winner) = outcome.winner() {
+            if game.user_color.to_string().eq(&winner.to_string()[..1]).clone() {
                 let score_entry = ScoreEntry::new(&game.username, board.fullmoves().get(), &game.difficulty);
-                let conn = &db.get().map_err(|_|(Status::InternalServerError, String::from("Could not add score!")))?;
-                add_score_entry(conn, score_entry).map_err(|_|(Status::InternalServerError, String::from("Could not add Score")))?;
+                let conn = &db.get().map_err(|_| (Status::InternalServerError, String::from("Could not add score!")))?;
+                add_score_entry(conn, score_entry).map_err(|_| (Status::InternalServerError, String::from("Could not add Score")))?;
             }
         }
 
@@ -87,7 +89,7 @@ async fn get_game_end(cookie_jar: &CookieJar<'_>, session_handler: &State<Sessio
 // It takes a `mov` alias move as form data representing the players move.
 // It uses `CookieJar` to manage session cookies and a `SessionHandler` to manage sessions.
 #[post("/move", data = "<mov>")]
-async fn post_move(mov: String, cookie_jar: &CookieJar<'_>, session_handler: &State<SessionHandler>) -> Result<String, (Status, String)> {
+async fn post_move(mov: String, cookie_jar: &CookieJar<'_>, session_handler: &State<SessionHandler>) -> FenResponse {
     // Grabs the users session if it exists
     let session = find_session(cookie_jar, session_handler).await.ok_or((Status::BadRequest, String::from("You are missing a session key!")))?;
     let mut game = session.get().await;
@@ -96,7 +98,7 @@ async fn post_move(mov: String, cookie_jar: &CookieJar<'_>, session_handler: &St
     let curr_fen = Fen::from_position(game.board.clone(), EnPassantMode::Legal).to_string();
 
     // Applies user's move, if it is invalid, the current fen will be returned
-    let uci: Uci = mov.parse().map_err(|_| (Status::NotAcceptable, curr_fen.clone()))?;
+    let uci: Uci = mov.parse().map_err(move |_| (Status::NotAcceptable, curr_fen))?;
     let mov = find_with_auto_promotion(&uci, &game.board).ok_or((Status::BadRequest, String::from("Your move could not be evaluated!")))?;
     game.board.play_unchecked(&mov);
 
@@ -110,14 +112,13 @@ async fn post_move(mov: String, cookie_jar: &CookieJar<'_>, session_handler: &St
     Ok(fen)
 }
 
-
+// Route handler `/scoreboard` it returns the top <count> scoreboard entries.
 #[get("/scoreboard?<count>")]
-async fn get_scoreboard(count: u16, db: &State<DB>)->Result<Json<Vec<ScoreEntry>>, (Status, String)>{
-    let conn = db.get().map_err(|_|(Status::InternalServerError, String::from("Could not access database")))?;
-    let top_scores = get_top(&conn, count).map_err(|_|(Status::InternalServerError, String::from("Could not receive scores!")))?;
+async fn get_scoreboard(count: u16, db: &State<DB>) -> Response<Json<Vec<ScoreEntry>>> {
+    let conn = db.get().map_err(|_| (Status::InternalServerError, "Could not access database"))?;
+    let top_scores = get_top(&conn, count).map_err(|_| (Status::InternalServerError, "Could not receive scores!"))?;
     Ok(Json(top_scores))
 }
-
 
 
 #[launch]
