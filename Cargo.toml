@@ -15,10 +15,6 @@ serde = { version = "1.0.203", features = ["derive"] }
 version = "0.5.1"
 features = ["secrets", "json"]
 
-[dependencies.structsy]
-version = "0.5.2"
-features = ["derive"]
-
 [dependencies.uuid]
 version = "1.8.0"
 features = [

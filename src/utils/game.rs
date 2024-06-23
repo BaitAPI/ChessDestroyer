@@ -1,7 +1,6 @@
 // The `engine` module contains the logic for the chess engine.
 mod engine;
 
-use std::time::Duration;
 // Importing necessary modules and structures from the `rand` and `shakmaty` crates.
 use shakmaty::{Chess, Move, Position};
 use rand::seq::SliceRandom;
@@ -28,7 +27,7 @@ impl DIFFICULTY {
         }
     }
 
-    pub fn parse_elo(&self) -> u16{
+    pub fn parse_elo(&self) -> u16 {
         match self {
             DIFFICULTY::EASY => 400,
             DIFFICULTY::MEDIUM => 900,
@@ -79,7 +78,7 @@ impl COLOR {
     }
 
     // Method to parse the color into a character code.
-    pub fn parse_code(&self)->char{
+    pub fn parse_code(&self) -> char {
         match &self {
             COLOR::BLACK => 'b',
             COLOR::WHITE => 'w'
@@ -91,18 +90,16 @@ impl COLOR {
 pub struct Game {
     pub board: Chess,
     pub engine: Engine,
-    #[allow(dead_code)]
     pub difficulty: DIFFICULTY,
-    #[allow(dead_code)]
     pub username: String,
-    pub user_color: char
+    pub user_color: char,
 }
 
 impl Game {
     // Asynchronous method to create a new `Game`.
     pub async fn new(user_color: COLOR, difficulty: DIFFICULTY, username: String) -> Option<Self> {
         let mut board = Chess::default();
-        let mut engine = Engine::new(difficulty.parse_depth(), difficulty.parse_elo())?;
+        let engine = Engine::new(difficulty.parse_depth(), difficulty.parse_elo())?;
         if matches!(user_color, COLOR::BLACK) {
             let uci: Uci = "d2d4".parse().ok()?;
             let mov: Move = uci.to_move(&board).ok()?;
@@ -113,7 +110,7 @@ impl Game {
             engine,
             difficulty,
             username,
-            user_color: user_color.parse_code()
+            user_color: user_color.parse_code(),
         })
     }
 }
@@ -129,7 +126,7 @@ impl Game {
 /// # Returns
 ///
 /// * `Option<Move>` - The found move, or `None` if no matching move or promotion move could be found.
-pub fn find_with_auto_promotion(uci: &Uci, board: &Chess)->Option<Move>{
+pub fn find_with_auto_promotion(uci: &Uci, board: &Chess) -> Option<Move> {
     // Try to convert the UCI command to a move on the given chess board.
     match uci.to_move(board) {
         // If the UCI command represents a valid move, return the move.
@@ -139,7 +136,7 @@ pub fn find_with_auto_promotion(uci: &Uci, board: &Chess)->Option<Move>{
             // Get all promotion moves on the chess board.
             let promotions = board.promotion_moves();
             // Define a comparison function that checks if a move matches the UCI command.
-            let compare = |x: &&Move| x.to().to_string() == uci.to_string()[2..] && x.from().is_some_and(|from|from.to_string() == uci.to_string()[..2]);
+            let compare = |x: &&Move| x.to().to_string() == uci.to_string()[2..] && x.from().is_some_and(|from| from.to_string() == uci.to_string()[..2]);
             // Find a promotion move that matches the UCI command.
             let mov = promotions.iter().find(compare)?;
             // If a matching promotion move is found, return the move.
