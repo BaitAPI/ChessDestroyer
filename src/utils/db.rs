@@ -1,6 +1,6 @@
 use std::env::current_dir;
 use std::sync::{Arc, Mutex, MutexGuard};
-use rusqlite::{Connection, OpenFlags};
+use rusqlite::{Connection, OpenFlags, Statement};
 use serde::Serialize;
 use crate::utils::errors::internal::InternalResult;
 use crate::utils::game::DIFFICULTY;
@@ -92,8 +92,11 @@ fn find_entry(conn: &Connection, winner: &str) -> Option<ScoreEntry> {
 
 pub fn get_top(conn: &Connection, count: u16) -> InternalResult<Vec<ScoreEntry>> {
     let query = format!("SELECT winner, score FROM Score ORDER BY score DESC LIMIT {}", count);
-    let mut stmt = conn.prepare(&query).map_err(|_| "DB-GETTING_TOP: Could not prepare database query")?;
+    let stmt = conn.prepare(&query).map_err(|_| "DB-GETTING_TOP: Could not prepare database query")?;
+    parse_to_scores(stmt)
+}
 
+fn parse_to_scores(mut stmt: Statement) -> InternalResult<Vec<ScoreEntry>> {
     let mut entries = Vec::new();
     let iterator = stmt.query_map([], |row| {
         Ok(
@@ -108,6 +111,12 @@ pub fn get_top(conn: &Connection, count: u16) -> InternalResult<Vec<ScoreEntry>>
         let score = score.map_err(|_| "DB-GETTING_TOP: Could not open score entry")?;
         entries.push(score);
     }
-
     Ok(entries)
+}
+
+pub fn get_all(conn: &Connection) -> InternalResult<Vec<ScoreEntry>> {
+    let query = "SELECT winner, score FROM Score ORDER BY score DESC".to_string();
+    let stmt = conn.prepare(&query).map_err(|_| "DB-GETTING_TOP: Could not prepare database query")?;
+
+    parse_to_scores(stmt)
 }

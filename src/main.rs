@@ -19,7 +19,7 @@ use rocket::serde::json::{Json};
 use shakmaty::fen::Fen;
 use shakmaty::uci::Uci;
 use rocket::State;
-use crate::utils::db::{add_score_entry, DB, get_top, ScoreEntry, set_score_schema};
+use crate::utils::db::{add_score_entry, DB, get_all, get_top, ScoreEntry, set_score_schema};
 use crate::utils::errors::external::{FenResponse, OkOrResponse, Response};
 use crate::utils::requests::GameSettings;
 
@@ -114,10 +114,13 @@ async fn post_move(mov: String, cookie_jar: &CookieJar<'_>, session_handler: &St
 
 // Route handler `/scoreboard` it returns the top <count> scoreboard entries.
 #[get("/scoreboard?<count>")]
-async fn get_scoreboard(count: u16, db: &State<DB>) -> Response<Json<Vec<ScoreEntry>>> {
+async fn get_scoreboard(count: Option<u16>, db: &State<DB>) -> Response<Json<Vec<ScoreEntry>>> {
     let conn = db.get().map_err(|_| (Status::InternalServerError, "Could not access database"))?;
-    let top_scores = get_top(&conn, count).map_err(|_| (Status::InternalServerError, "Could not receive scores!"))?;
-    Ok(Json(top_scores))
+    let scores = match count {
+        None => get_all(&conn),
+        Some(count) => get_top(&conn, count)
+    }.map_err(|_| (Status::InternalServerError, "Could not receive scores!"))?;
+    Ok(Json(scores))
 }
 
 
