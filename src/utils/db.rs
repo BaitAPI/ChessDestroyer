@@ -91,7 +91,7 @@ fn find_entry(conn: &Connection, winner: &str) -> Option<ScoreEntry> {
 }
 
 pub fn get_top(conn: &Connection, count: u16) -> InternalResult<Vec<ScoreEntry>> {
-    let query = format!("SELECT winner, score FROM Score ORDER BY score ASC LIMIT {}", count);
+    let query = format!("SELECT winner, score FROM Score ORDER BY score DESC LIMIT {}", count);
     let mut stmt = conn.prepare(&query).map_err(|_| "DB-GETTING_TOP: Could not prepare database query")?;
 
     let mut entries = Vec::new();
