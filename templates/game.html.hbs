@@ -37,6 +37,11 @@
                     <div class="game-over-content">
                         <h1>Game Over</h1>
                         <h2 id="over-description">placeholder for nu checker</h2>
+                        <hr>
+                        <h2 id="scoreboard-description">Checkout the Scoreboard:</h2>
+                        <div class="scoreboard" id="scoreboard">
+                            <!-- Scoreboard content will be injected here -->
+                        </div>
                     </div>
 
                 </div>
@@ -151,7 +156,6 @@
                 if (game.game_over()) {
                     const response = await fetch('/game_end')
                     if (response.ok) {
-
                         let overText = '';
 
                         let moveColor = 'Weiss';
@@ -169,6 +173,8 @@
 
                         const overDescription = document.getElementById('over-description');
                         overDescription.innerText = overText;
+
+                        fetchScoreboard(10).then(data => renderScoreboard(data));
 
                         overContainer.style.display = "block";
 
@@ -248,6 +254,71 @@
 
                 await opponentMove(response['move'], "");
                 await checkGameOver();
+            }
+
+
+            async function fetchScoreboard(count) {
+                try {
+                    const response = await fetch(`/scoreboard?count=${count}`);
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    const data = await response.json();
+                    return data;
+                } catch (error) {
+                    console.error('Failed to fetch scoreboard:', error);
+                }
+            }
+
+            function renderScoreboard(scoreboard) {
+                const scoreboardDiv = document.getElementById('scoreboard');
+                scoreboardDiv.innerHTML = ''; // Clear any existing content
+
+                if (scoreboard && scoreboard.length > 0) {
+                    // Sort scoreboard in descending order based on score
+                    scoreboard.sort((a, b) => b.score - a.score);
+
+                    const table = document.createElement('table');
+                    table.classList.add('scoreboard-table');
+                    const thead = document.createElement('thead');
+                    const tbody = document.createElement('tbody');
+
+                    // Create table headers
+                    const headerRow = document.createElement('tr');
+                    const rankHeader = document.createElement('th');
+                    rankHeader.textContent = 'Rank';
+                    const winnerHeader = document.createElement('th');
+                    winnerHeader.textContent = 'Winner';
+                    const scoreHeader = document.createElement('th');
+                    scoreHeader.textContent = 'Score';
+                    headerRow.appendChild(rankHeader);
+                    headerRow.appendChild(winnerHeader);
+                    headerRow.appendChild(scoreHeader);
+                    thead.appendChild(headerRow);
+
+                    // Create table rows
+                    scoreboard.forEach((entry, index) => {
+                        const row = document.createElement('tr');
+                        const rankCell = document.createElement('td');
+                        rankCell.textContent = index + 1;
+                        const winnerCell = document.createElement('td');
+                        winnerCell.textContent = entry.winner;
+                        const scoreCell = document.createElement('td');
+                        scoreCell.textContent = entry.score;
+                        row.appendChild(rankCell);
+                        row.appendChild(winnerCell);
+                        row.appendChild(scoreCell);
+                        tbody.appendChild(row);
+                    });
+
+                    table.appendChild(thead);
+                    table.appendChild(tbody);
+                    scoreboardDiv.appendChild(table);
+
+                    document.getElementById('scoreboard-description').textContent = 'Check out the top scores:';
+                } else {
+                    document.getElementById('scoreboard-description').textContent = 'No scores available.';
+                }
             }
         </script>
     </body>
