@@ -60,20 +60,48 @@ html {
     max-width: 700px;
     margin: auto;
     background-color: antiquewhite;
+    position: relative;
 }
 
 .game-over-content h1 {
-    height: 50%;
-    font-size: 5rem;
-    padding-top: 2rem;
+    font-size: 4rem;
+    padding-top: 1rem;
     font-family:Papyrus, fantasy;
     margin-bottom: 0;
+    margin-top: 0;
 }
 
 .game-over-content h2 {
-    font-size: 2rem;
+    font-size: 1.5rem;
     margin-top: 0;
     font-family:Papyrus, fantasy;
+}
+
+.game-over-content a:link, a:visited {
+    color: black;
+    position: absolute;
+    top: 10px;
+    left: 16px;
+    display: inline-block;
+    text-decoration: none;
+}
+
+.game-over-content a:after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    transform: scaleX(0);
+    height: 3px;
+    background-color: rgb(182,226,255);
+    transform-origin: bottom right;
+    transition: transform 0.25s ease-out;
+}
+
+.game-over-content a:hover::after {
+    transform: scaleX(1);
+    transform-origin: bottom left;
 }
 
 #board {

@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <html lang="de">
     <head>
-        <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+        <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Game | ChessDestroyer</title>
         <link rel="stylesheet" href="css/main.css">
@@ -20,8 +20,8 @@
                 <div class="center-inner grid-container">
                     <div id="board"></div>
                     <div id="opponent" class="players">
-                        <h3>Opponent Name</h3>
-                        <p> <span>Stärke:</span> {{difficulty}}</p>
+                        <h3>Opponent</h3>
+                        <p> <span>Strengh:</span> {{difficulty}}</p>
                     </div>
                     <div id="player" class="players">
                         <h3>{{username}}</h3>
@@ -34,12 +34,12 @@
             <div class="center">
                 <div class="center-middle">
                     <div class="game-over-content">
+                        <a href="/settings.html">&larr; Go Back and Play again</a>
                         <h1>Game Over</h1>
                         <h2 id="over-description">placeholder for nu checker</h2>
                         <hr>
                         <h2 id="scoreboard-description">Checkout the Scoreboard:</h2>
-                        <div class="scoreboard" id="scoreboard">
-                            <!-- Scoreboard content will be injected here -->
+                        <div id="scoreboard">
                         </div>
                     </div>
                 </div>
