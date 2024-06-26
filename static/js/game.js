@@ -1,6 +1,15 @@
-const game = new Chess();
+let cheatMode = false;
+
+const overContainer = document.getElementById('game-over-container');
+const playerId = document.getElementById("player");
+const opponentId = document.getElementById("opponent");
+const scoreboardDescription = document.getElementById('scoreboard-description')
 const playerColorShort = document.getElementById("hidden-color").value;
+
+const game = new Chess();
+
 const playerColor = playerColorShort === "w" ? "white" : "black";
+
 const boardConfig = {
     draggable: true,
     dropOffBoard: 'snapback',
@@ -45,8 +54,8 @@ async function fetchBoard(src, dest) {
 
 async function opponentMove(src, dest) {
     if (game.turn() === playerColorShort) return;
-    const fen = await fetchBoard(src, dest);
     try {
+        const fen = await fetchBoard(src, dest);
         game.load(fen);
         board.position(game.fen());
     } catch (e) {
@@ -55,8 +64,6 @@ async function opponentMove(src, dest) {
     await checkGameOver();
     if (cheatMode) await cheat();
 }
-
-const overContainer = document.getElementById('game-over-container');
 
 async function checkGameOver() {
     if (!game.game_over()) {
@@ -73,20 +80,18 @@ async function checkGameOver() {
         } else {
             console.error('ERROR: Unexpected Status while fetching game over: ' + response.status);
         }
+        highlightTurn()
         return;
     }
 
     let overText = '';
-    if (game.in_checkmate()) overText = (game.turn() === 'b' ? 'Schwarz' : 'Weiss') + ' ist Schachmatt';
-    if (game.in_draw()) overText = 'Unentschieden';
+    if (game.in_checkmate()) overText = (game.turn() === 'w' ? 'White' : 'Black') + ' is Checkmate';
+    if (game.in_draw()) overText = 'Draw';
     document.getElementById('over-description').innerText = overText;
 
-    fetchScoreboard(10).then(data => renderScoreboard(data));
+    fetchScoreboard(1000).then(data => renderScoreboard(data));
     overContainer.style.display = "block";
 }
-
-const playerId = document.getElementById("player");
-const opponentId = document.getElementById("opponent");
 
 function highlightTurn() {
     playerId.style.opacity = game.turn() === playerColorShort ? '100%' : '50%';
@@ -140,8 +145,6 @@ function renderScoreboard(scoreboard) {
     scoreboardDiv.innerHTML = '';
 
     if (scoreboard && scoreboard.length > 0) {
-        //scoreboard.sort((a, b) => b.score - a.score);
-
         const table = document.createElement('table');
         table.classList.add('scoreboard-table');
         const thead = document.createElement('thead');
@@ -169,13 +172,11 @@ function renderScoreboard(scoreboard) {
         table.appendChild(tbody);
         scoreboardDiv.appendChild(table);
 
-        document.getElementById('scoreboard-description').textContent = 'Werfen Sie einen Blick auf die Highscores:';
+        scoreboardDescription.textContent = 'Take a look at the Scoreboard:';
     } else {
-        document.getElementById('scoreboard-description').textContent = 'Es gibt noch keine Highscores.';
+        scoreboardDescription.textContent = 'There are no Scores jet.';
     }
 }
-
-let cheatMode = false;
 
 function firstMove() {
     highlightTurn();
