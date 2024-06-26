@@ -2,7 +2,10 @@
 .topnav {
     background-color: #333;
     overflow: hidden;
-    position: static;
+    position: relative;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
 }
 
 body{
@@ -14,21 +17,32 @@ body{
 
 @media (max-width: 800px) {
     body{
-        overflow: scroll;
+        overflow: auto;
+    }
+    .content {
+        position: relative;
+        width: 90%;
+        margin: 20px auto;
+        padding: 10px;
+        top: 0;
+        left: 0;
+    }
+    #description {
+        width: 100%;
+    }
+    #features {
+        width: 100%;
     }
 }
 
 @media (max-height: 800px) {
     body{
-        overflow: scroll;
+        overflow: auto;
     }
-
 }
-
 
 /* Style the links inside the navigation bar */
 .topnav a {
-    float: left;
     color: #f2f2f2;
     text-align: center;
     padding: 14px 16px;
@@ -36,8 +50,7 @@ body{
     font-size: 17px;
 }
 
-.topnav img{
-    float: left;
+.topnav img {
     padding: 10px;
     height: 25px;
     align-content: center;
@@ -55,34 +68,25 @@ body{
     color: white;
 }
 
-#nav-imprint{
-    float: right;
+#nav-imprint {
+    margin-left: auto;
 }
-
 
 /* Background */
-
-main{
+main {
     width: 100%;
     height: 100%;
-}
-
-.background{
-    height: 100%;
-    width: 100%;
-    background-image: url("../../assets/blured_brown_coded.mp4");
-    background-size: cover;
-    background-repeat: no-repeat;
+    position: relative;
     overflow: hidden;
-
 }
 
-/* Style the video: 100% width and height to cover the entire window */
 #myVideo {
+    position: absolute;
     right: 0;
     bottom: 0;
     min-width: 100%;
     min-height: 100%;
+    z-index: -1;
 }
 
 .content {
@@ -90,42 +94,40 @@ main{
     background: rgba(0, 0, 0, 0.5);
     color: #f1f1f1;
     border-radius: 2px;
-
+    padding: 20px;
 }
 
-#description{
+#description {
     width: 30%;
-    padding: 20px;
     top: 10%;
     left: 5%;
 }
 
-#features{
+#features {
     width: 30%;
-    padding: 20px;
     top: 10%;
     right: 5%;
 }
 
-#features ul{
+#features ul {
     padding: 0;
 }
 
-#features li{
+#features li {
     padding-bottom: 10px;
     list-style: none;
 }
 
- #play_btn{
-     width: 100%;
-     height: 40px;
-     background-color: #04AA6D;
-     border: none;
-     display: inline-block;
-     border-radius: 2px;
- }
+#play_btn {
+    width: 100%;
+    height: 40px;
+    background-color: #04AA6D;
+    border: none;
+    display: inline-block;
+    border-radius: 2px;
+}
 
- #play_btn:hover{
-     color: #dddddd;
-     cursor: pointer;
- }
+#play_btn:hover {
+    color: #dddddd;
+    cursor: pointer;
+}
