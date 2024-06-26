@@ -2,16 +2,69 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Settings - DEMO</title>
+    <link type="text/css" href="css/settings.css" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings - Chessdestroyer 4000</title>
 </head>
 <body>
-<form action="/game" method="get">
-    <input type="hidden" name="new_session" value="true">
-    <input type="text" name="username" value="username">
-    <input type="text" name="difficulty" value="10">
-    <input type="text" name="color" value="w">
 
-    <input type="submit">
-</form>
+<header>
+    <nav>
+        <div class="topnav">
+            <img src="assets/placeholder.png" alt="Chessdestroyer 4000 Logo">
+            <a href="welcome_page.html">Start</a>
+            <a class="active" href="settings.html">Settings</a>
+            <a href="imprint.html" id="nav-imprint">Imprint</a>
+        </div>
+    </nav>
+</header>
+
+<video autoplay muted loop id="myVideo">
+    <source src="assets/blured_brown.mp4" type="video/mp4">
+</video>
+
+<main>
+    <div class="container">
+        <form action="/game" method="get">
+            <div class="card-container">
+                <input type="hidden" name="new_session" value="true">
+                <div class="card">
+                    <label for="username">Username</label>
+                    <input type="text" name="username" id="username" minlength="1" placeholder="Username">
+                </div>
+                <div class="card">
+                    <label for="difficulty">Difficulty</label>
+                    <input type="range" name="difficulty" id="difficulty" min="1" max="3" value="2" oninput="this.nextElementSibling.value = this.value">
+                    <output>2</output>
+                </div>
+                <div class="card">
+                    <label>Color</label>
+                    <div class="radio-group">
+                        <label for="color-white">
+                            <input type="radio" name="color" value="w" id="color-white" checked="checked">
+                            White
+                        </label>
+                        <label for="color-random">
+                            <input type="radio" name="color" value="r" id="color-random">
+                            Random
+                        </label>
+                        <label for="color-black">
+                            <input type="radio" name="color" value="b" id="color-black">
+                            Black
+                        </label>
+                    </div>
+                </div>
+                <div class="card">
+                    <input type="submit" value="Play!">
+                </div>
+            </div>
+        </form>
+    </div>
+</main>
+
+<aside>
+    <!-- Manual/Descriptions etc here; content below the settings and PLAY NOW -->
+</aside>
+
 </body>
 </html>
