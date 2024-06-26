@@ -5,11 +5,13 @@ use shakmaty::{Chess, EnPassantMode, Move};
 use shakmaty::fen::Fen;
 use shakmaty::uci::Uci;
 use tokio::sync::mpsc::{channel, Receiver};
+use tokio::task::JoinHandle;
 use crate::utils::errors::internal::InternalResult;
 use crate::utils::game::find_with_auto_promotion;
 
 pub struct Engine {
     // Dead code needs to be allowed here, because the child guard is needed to ensure subprocess kill after drop
+    handle: JoinHandle<()>,
     #[allow(dead_code)]
     child_guard: ChildGuard,
     sender: ChildStdin,
@@ -30,7 +32,7 @@ impl Engine {
         let (tx, rx) = channel(1024);
         let reader = BufReader::new(_stdout);
 
-        tokio::spawn(async move {
+        let handle = tokio::spawn(async move {
             for line in reader.lines() {
                 let line = line.unwrap_or("".to_string());
                 if line.contains("bestmove") {
@@ -40,6 +42,7 @@ impl Engine {
             }
         });
         let mut engine = Engine {
+            handle,
             child_guard,
             sender: _stdin,
             receiver: rx,
@@ -69,7 +72,7 @@ impl Engine {
 
         let _ = self.send(fen_cmd).map_err(|_| "ENGINE: Could not send fen command")?;
         let _ = self.send(depth_cmd).map_err(|_| "ENGINE: Could not send depth command")?;
-        tokio::time::sleep(Duration::from_millis(100)).await;
+        tokio::time::sleep(Duration::from_millis(250)).await;
         let mv = self.receive().await.map_err(|_| "ENGINE: Could not receive generated move")?;
 
         let uci: Uci = mv.parse().map_err(|_| "ENGINE: Generated move is no valid UCI")?;
@@ -78,6 +81,11 @@ impl Engine {
     }
 }
 
+impl Drop for Engine{
+    fn drop(&mut self) {
+        self.handle.abort();
+    }
+}
 
 struct ChildGuard {
     child: Child,

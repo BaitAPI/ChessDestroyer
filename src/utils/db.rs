@@ -64,7 +64,7 @@ pub fn add_score_entry(conn: &Connection, entry: ScoreEntry) -> InternalResult<(
         Ok(_) => Ok(()),
         Err(_) => {
             let old_entry = find_entry(conn, &entry.winner).ok_or("DB-ADDING_SCORE: Could not find database entry")?;
-            if old_entry.score > entry.score {
+            if old_entry.score < entry.score {
                 conn.execute(
                     "UPDATE Score SET score = ?1 WHERE winner = ?2",
                     (entry.score, entry.winner),
