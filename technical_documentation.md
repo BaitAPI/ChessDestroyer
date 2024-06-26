@@ -84,8 +84,8 @@ Ablauf der Frontend Logik, nachdem die Website fertig geladen ist (Dies passiert
    2. Falls der Spieler die Figurenfarbe Schwarz hat, wird die Funktion `opponentMove("0", "0")` aufgerufen.
 
 # Backend
-Der _Quellcode des Backends_ befindet sich im [```src```](https://github.com/BaitAPI/ChessDestroyer/tree/08395f942042f668a41df4fcec7743a5e363ba7c/src) Verzeichnis des Projekts. Der __Einstiegspunkt__ ist hierbei die [```main.rs```](https://github.com/BaitAPI/ChessDestroyer/blob/08395f942042f668a41df4fcec7743a5e363ba7c/src/main.rs) mit der Funktion [```rocket```](https://github.com/BaitAPI/ChessDestroyer/blob/08395f942042f668a41df4fcec7743a5e363ba7c/src/main.rs#L125).
-Die [```Cargo.toml```](https://github.com/BaitAPI/ChessDestroyer/blob/08395f942042f668a41df4fcec7743a5e363ba7c/Cargo.toml) im Root-Verzeichnis gibt die __Abhängigkeiten__ des Projektes an und wird von [__cargo__](https://doc.rust-lang.org/nightly/nightly-rustc/cargo/) (dem Package-Manager von Rust) benötigt.
+Der _Quellcode des Backends_ befindet sich im [```src```](https://github.com/BaitAPI/ChessDestroyer/tree/b6f634c6a955f751b0d1907ce2b5274e1d168a62/src) Verzeichnis des Projekts. Der __Einstiegspunkt__ ist hierbei die [```main.rs```](https://github.com/BaitAPI/ChessDestroyer/blob/b6f634c6a955f751b0d1907ce2b5274e1d168a62/src/main.rs) mit der Funktion [```rocket```](https://github.com/BaitAPI/ChessDestroyer/blob/b6f634c6a955f751b0d1907ce2b5274e1d168a62/src/main.rs#L128).
+Die [```Cargo.toml```](https://github.com/BaitAPI/ChessDestroyer/blob/b6f634c6a955f751b0d1907ce2b5274e1d168a62/Cargo.toml) im Root-Verzeichnis gibt die __Abhängigkeiten__ des Projektes an und wird von [__cargo__](https://doc.rust-lang.org/nightly/nightly-rustc/cargo/) (dem Package-Manager von Rust) benötigt.
 ## Verwendete Technologien
 Für das Backend der Webanwendung wurde [__Rust__](https://www.rust-lang.org/) in Kombination mit dem [__Rocket Framework__](https://rocket.rs/) ausgewählt. Diese Entscheidung resultierte aus den spezifischen Anforderungen des Projekts, in dem die Anwendung äußerst _robust_ sein und eine ausgezeichnete Fehlerbehandlung bieten sollte. Zudem war es wichtig, zu verhindern, dass bei fehlerhaften Serveranfragen _Laufzeitfehler_ entstehen.\
 __Rust__, als _typensichere Programmiersprache_ mit _hervorragender Fehlerbehandlung_, wurde als ideal geeignet betrachtet. Das __Rocket Framework__ überzeugte durch seine _einfache Syntax_, die eine schnelle Implementierung eines Webservers ermöglicht. Darüber hinaus unterstützt es nativ die _asynchrone Anfragenverarbeitung_ und bietet eine sehr gute _Laufzeitperformance_. Das Konzept der _mountable applications_ erleichtert die Unterteilung der Anwendung in Komponenten, was die _Integration neuer Funktionen_, wie zum Beispiel des dynamisches HTML-Rendering, erheblich vereinfacht und entsprechend effizient umsetzt.\
@@ -93,12 +93,12 @@ Für die _Verwaltung_ und _Durchführung_ des Schachspiels wurde die [__Shakmaty
 Für die _persistente Speicherung_ des Scoreboards und das gleichzeitige Durchführen von _Änderungen aus einem asynchronen Kontext_ ohne das Auftreten von race conditions wurde die [__Rusqlite__](https://docs.rs/rusqlite/latest/rusqlite/) Bibliothek verwendet. Diese _basiert auf SQLite_ und ermöglicht eine effiziente Fehlerbehandlung, wobei die Vorteile einer SQLite-basierten Datenbank voll zum Tragen kommen.
 ## Routen und Aufbau
 ### Aufbau
-Im Rahmen der _Instanziierung des Webservers_ mit der Funktion [`rocket`](https://github.com/BaitAPI/ChessDestroyer/blob/08395f942042f668a41df4fcec7743a5e363ba7c/src/main.rs#L125), werden zunächst mehrere Objekte generiert, die als __Zustände__ in das Rocket Framework übergeben werden. Dabei wird ein [```SessionHandler```](https://github.com/BaitAPI/ChessDestroyer/blob/08395f942042f668a41df4fcec7743a5e363ba7c/src/main.rs#L127) erstellt, welcher `Game` Instanzen speichert und diese einem Client durch später platzierte SessionId-Cookies zuordnet. Zudem wird ein [```DB```](https://github.com/BaitAPI/ChessDestroyer/blob/08395f942042f668a41df4fcec7743a5e363ba7c/src/main.rs#L129) Objekt, als Verbindung zur persistenten rusqlite Datenbank, generiert und ebenfalls an das Rocket Framework übergeben.
+Im Rahmen der _Instanziierung des Webservers_ mit der Funktion [`rocket`](https://github.com/BaitAPI/ChessDestroyer/blob/b6f634c6a955f751b0d1907ce2b5274e1d168a62/src/main.rs#L128), werden zunächst mehrere Objekte generiert, die als __Zustände__ in das Rocket Framework übergeben werden. Dabei wird ein [```SessionHandler```](https://github.com/BaitAPI/ChessDestroyer/blob/b6f634c6a955f751b0d1907ce2b5274e1d168a62/src/main.rs#L130) erstellt, welcher `Game` Instanzen speichert und diese einem Client durch später platzierte SessionId-Cookies zuordnet. Zudem wird ein [```DB```](https://github.com/BaitAPI/ChessDestroyer/blob/b6f634c6a955f751b0d1907ce2b5274e1d168a62/src/main.rs#L132) Objekt, als Verbindung zur persistenten rusqlite Datenbank, generiert und ebenfalls an das Rocket Framework übergeben.
 ### Routen
 Der Webserver unterstützt _fünf explizit definierte Routen_ sowie eine Route für die _statische Dateibereitstellung_. Die Funktionen der einzelnen Routen werden im Folgenden genauer erläutert:
-1) [GET /](https://github.com/BaitAPI/ChessDestroyer/blob/08395f942042f668a41df4fcec7743a5e363ba7c/src/main.rs#L28) \
+1) [GET /](https://github.com/BaitAPI/ChessDestroyer/blob/b6f634c6a955f751b0d1907ce2b5274e1d168a62/src/main.rs#L28) \
    Diese Route wird normalerweise als erste aufgerufen und _leitet die Anfrage_ des Clients _permanent_ an die ```welcome_page.html``` weiter.
-2) [GET /game](https://github.com/BaitAPI/ChessDestroyer/blob/08395f942042f668a41df4fcec7743a5e363ba7c/src/main.rs#L36) \
+2) [GET /game](https://github.com/BaitAPI/ChessDestroyer/blob/b6f634c6a955f751b0d1907ce2b5274e1d168a62/src/main.rs#L36) \
    Diese Route wird üblicherweise über das Formular der ```settings.html``` aufgerufen und dient der _Erstellung eines Spieles_.\
    Sie muss folgende __Parameter__ beinhalten:
    - ```new_session```: Option\
@@ -114,7 +114,7 @@ Der Webserver unterstützt _fünf explizit definierte Routen_ sowie eine Route f
    Dann wird ein _neues Spiel_ mit den vorgegebenen Parametern _generiert_. Dabei wird über die `Game`-Instanz unter anderem ein Unterprozess der Stockfish-Instanz erstellt.\
    Ist das _Spiel erfolgreich erstellt_ worden, wird anschließend eine neue Sitzung, die mit der `Game`-Instanz verknüpft ist, erstellt und im `SessionHandler` gespeichert.\
    Schließlich wird die ```game.html``` über Handlebars _generiert und als Antwort zurückgegeben_, wobei wichtige Informationen, wie die Spielerfarbe und der Nutzername, in das HTML eingefügt werden.
-3) [POST /move](https://github.com/BaitAPI/ChessDestroyer/blob/08395f942042f668a41df4fcec7743a5e363ba7c/src/main.rs#L92) \
+3) [POST /move](https://github.com/BaitAPI/ChessDestroyer/blob/b6f634c6a955f751b0d1907ce2b5274e1d168a62/src/main.rs#L92) \
    Diese Route wird während eines Spiels wiederholt von der ```game.html``` aufgerufen, um einen vom Spieler _ausgeführten Zug zu validieren_ und den entsprechenden _Gegenzug der Stockfish-Engine_ zu ermitteln.\
    Die Anfrage muss folgenden __Body__ haben:
    - ```move```: String
@@ -123,16 +123,16 @@ Der Webserver unterstützt _fünf explizit definierte Routen_ sowie eine Route f
    Zunächst wird überprüft, ob der anfordernde Client überhaupt eine Session besitzt. Ist dies der Fall, wird die zugehörige _Spielsitzung geladen_ und der _Zug des Spielers validiert und ausgeführt_.\
    Sollte der _Zug ungültig_ sein, wird der letzte _Schachbrettzustand als FEN_ mit einem _406-Statuscode_ zurück an den Client gesendet, um eine Fortsetzung des Spiels mit einem validierten Schachbrett zu ermöglichen.\
    Im weiteren Verlauf berechnet und vollzieht die _Stockfish-Engine_, die der `Game`-Instanz zugeordnet ist, den _Gegenzug_. Der _neue Schachbrettzustand_ wird dann als FEN mit einem _positiven Statuscode_ zurückgegeben.
-4) [GET /game_end](https://github.com/BaitAPI/ChessDestroyer/blob/08395f942042f668a41df4fcec7743a5e363ba7c/src/main.rs#L64) \
+4) [GET /game_end](https://github.com/BaitAPI/ChessDestroyer/blob/b6f634c6a955f751b0d1907ce2b5274e1d168a62/src/main.rs#L64) \
    Der Aufruf dieser Route erfolgt, wenn der _Client_ auf der ```game.html``` _vermutet_, dass das _Spiel beendet_ ist.<br/>
    Die _Route überprüft_, ob das Spiel tatsächlich beendet ist. Im Fall, dass das Spiel beendet ist, wird ein _200er-Statuscode_ zurückgegeben. Andernfalls wird mit dem _Statuscode 406_ der _letzte Spielzustand als FEN_ zurückgesendet.
-5) [GET /scoreboard](https://github.com/BaitAPI/ChessDestroyer/blob/08395f942042f668a41df4fcec7743a5e363ba7c/src/main.rs#L117) \
+5) [GET /scoreboard](https://github.com/BaitAPI/ChessDestroyer/blob/b6f634c6a955f751b0d1907ce2b5274e1d168a62/src/main.rs#L117) \
    Der Aufruf dieser Route erfolgt, sobald ein _Spiel beendet_ ist und das _Scoreboard_ geladen werden soll.\
    Sie muss folgenden __Parameter__ beinhalten:
    - ```count```: int\
      Ein _optionaler Parameter_, der die _Anzahl der Scoreboard-Einträge_, die geladen werden sollen, angibt.
 
    Diese Route öffnet über den ```DB``` Zustand eine _Verbindung zur Datenbank_ und gibt die entsprechenden Einträge, sofern vorhanden, aus. Sie werden als _Liste im JSON-Format_ an den Client übermittelt.
-6) [GET /<document_name>](https://github.com/BaitAPI/ChessDestroyer/blob/08395f942042f668a41df4fcec7743a5e363ba7c/src/main.rs#L136) \
+6) [GET /<document_name>](https://github.com/BaitAPI/ChessDestroyer/blob/b6f634c6a955f751b0d1907ce2b5274e1d168a62/src/main.rs#L139) \
    Der Aufruf dieser Route dient dazu, alle _statischen Ressourcen bereitzustellen_, die im Ordner ```static``` vorliegen. Sie wird über den ```FileServer``` instanziiert.\
    Über diese Route werden insbesondere die ```welcome_page.html```, die ```settings.html```, die ```impressum.html``` sowie die zugehörigen CSS- und JS-Dateien bereitgestellt.
