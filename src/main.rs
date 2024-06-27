@@ -7,8 +7,11 @@ mod utils;
 
 
 // Importing the public endpoints of our utils
+use crate::utils::db::{add_score_entry, DB, get_all, get_top, ScoreEntry, set_score_schema};
 use crate::utils::session::{find_session, remove_session, SessionHandler, add_session};
 use crate::utils::game::{COLOR, DIFFICULTY, find_with_auto_promotion, Game};
+use crate::utils::errors::external::{FenResponse, OkOrResponse, Response};
+use crate::utils::requests::GameSettings;
 
 // Importing necessary modules and structures from the `rocket` and `shakmaty` crates.
 use rocket_dyn_templates::{context, Template};
@@ -21,9 +24,6 @@ use rocket::form::Form;
 use shakmaty::fen::Fen;
 use shakmaty::uci::Uci;
 use rocket::State;
-use crate::utils::db::{add_score_entry, DB, get_all, get_top, ScoreEntry, set_score_schema};
-use crate::utils::errors::external::{FenResponse, OkOrResponse, Response};
-use crate::utils::requests::GameSettings;
 
 // Route handler for the root URL ("/"). Redirects to "/welcome_page.html"
 #[get("/")]
