@@ -5,6 +5,7 @@ extern crate rocket;
 // The `utils` module contains all self-written utility function for the game logic
 mod utils;
 
+
 // Importing the public endpoints of our utils
 use crate::utils::session::{find_session, remove_session, SessionHandler, add_session};
 use crate::utils::game::{COLOR, DIFFICULTY, find_with_auto_promotion, Game};
@@ -14,8 +15,9 @@ use rocket_dyn_templates::{context, Template};
 use shakmaty::{EnPassantMode, Position};
 use rocket::fs::{FileServer, relative};
 use rocket::http::{CookieJar, Status};
-use rocket::response::Redirect;
 use rocket::serde::json::{Json};
+use rocket::response::Redirect;
+use rocket::form::Form;
 use shakmaty::fen::Fen;
 use shakmaty::uci::Uci;
 use rocket::State;
@@ -32,8 +34,8 @@ async fn get() -> Redirect {
 // Route handler for "/game". It handles the creation of a new game and its session.
 // It takes an optional `new:session` query parameter and `game_settings` form data.
 // It uses `CookieJar` to manage session cookies and a `SessionHandler` to manage the game session.
-#[get("/game?<game_settings..>")]
-async fn get_game(game_settings: GameSettings, cookie_jar: &CookieJar<'_>, session_handler: &State<SessionHandler>) -> Response<Template> {
+#[post("/game", data="<game_settings>")]
+async fn get_game(game_settings: Form<GameSettings>, cookie_jar: &CookieJar<'_>, session_handler: &State<SessionHandler>) -> Response<Template> {
     if let Some(_) = find_session(cookie_jar, session_handler).await {
         // The user already has a session
         if game_settings.new_session.is_none() {
