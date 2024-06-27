@@ -98,7 +98,7 @@ Im Rahmen der _Instanziierung des Webservers_ mit der Funktion [`rocket`](https:
 Der Webserver unterstützt _fünf explizit definierte Routen_ sowie eine Route für die _statische Dateibereitstellung_. Die Funktionen der einzelnen Routen werden im Folgenden genauer erläutert:
 1) [GET /](https://github.com/BaitAPI/ChessDestroyer/blob/b6f634c6a955f751b0d1907ce2b5274e1d168a62/src/main.rs#L28) \
    Diese Route wird normalerweise als erste aufgerufen und _leitet die Anfrage_ des Clients _permanent_ an die ```welcome_page.html``` weiter.
-2) [GET /game](https://github.com/BaitAPI/ChessDestroyer/blob/b6f634c6a955f751b0d1907ce2b5274e1d168a62/src/main.rs#L36) \
+2) [POST /game](https://github.com/BaitAPI/ChessDestroyer/blob/b6f634c6a955f751b0d1907ce2b5274e1d168a62/src/main.rs#L36) \
    Diese Route wird üblicherweise über das Formular der ```settings.html``` aufgerufen und dient der _Erstellung eines Spieles_.\
    Sie muss folgende __Parameter__ beinhalten:
    - ```new_session```: Option\
