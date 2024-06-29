@@ -113,8 +113,12 @@ main {
     padding: 0;
 }
 
+#features ul p{
+    padding-bottom: 0px;
+    margin: 0 0 10px 0;
+}
+
 #features li {
-    padding-bottom: 10px;
     list-style: none;
 }
 
