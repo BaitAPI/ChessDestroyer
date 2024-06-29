@@ -37,23 +37,22 @@ Die `settings.html` Unterseite gibt dem Nutzer die Möglichkeit, seinen Nutzerna
 ## Frontend Design
 
 ### welcome_page.html
-Die Landing Page für die Webanwendung "Chessdestroyer 4000" bietet eine kurze Einführung in das Produkt, hebt seine Hauptmerkmale hervor und bietet einfache Navigationselemente sowie eine Schaltfläche zum Starten des Spiels.
-Wichtige Features
-Durch das Meta-Viewport-Tag und die externe CSS-Datei ist die Seite auf verschiedene Bildschirmgrößen angepasst.
-Ein Formular mit einer Schaltfläche zum Starten des Spiels, das den Benutzer zur Seite "settings.html" führt.
-Multimedia: Ein Hintergrundvideo, das der Seite ein dynamisches und ansprechendes Aussehen verleiht.
+Die Landing Page für die Webanwendung "Chessdestroyer 4000" bietet eine kurze Einführung in das Produkt, hebt seine Hauptmerkmale hervor und bietet einfache Navigationselemente sowie eine Schaltfläche zum Starten des Spiels.\
+#### Wichtige Features
+- Durch das Meta-Viewport-Tag und die externe CSS-Datei ist die Seite auf verschiedene Bildschirmgrößen angepasst.
+- Ein Formular mit einer Schaltfläche zum Starten des Spiels, das den Benutzer zur Seite "settings.html" führt.
+- Multimedia: Ein Hintergrundvideo, das der Seite ein dynamisches und ansprechendes Aussehen verleiht.
 
 ### settings.html
-Die Einstellungsseite für die Webanwendung "Chessdestroyer 4000" ermöglicht es Benutzern, ihre Spielerinformationen und -präferenzen festzulegen, bevor sie ein neues Spiel starten.
-
-Verstecktes Feld: Enthält ein verstecktes Eingabefeld (hidden), um eine neue Sitzung zu kennzeichnen.  
-Benutzernamen-Feld: Ein Eingabefeld für den Benutzernamen (username), das erforderlich ist und auf 20 Zeichen begrenzt ist.  
-Schwierigkeitsgrad: Ein Schieberegler (range) für die Auswahl des Schwierigkeitsgrads mit einem Bereich von 1 bis 3, wobei der aktuelle Wert angezeigt wird.  
-Farbauswahl: Radiobuttons für die Auswahl der Spielerfarbe (Weiß, Zufällig, Schwarz).
-Absenden: Eine Schaltfläche zum Absenden des Formulars und Starten des Spiels.
+Die Einstellungsseite ermöglicht es Benutzern, ihre Spielerinformationen und -präferenzen festzulegen, bevor sie ein neues Spiel starten.
+- Verstecktes Feld: Enthält ein verstecktes Eingabefeld (hidden), um eine neue Sitzung zu kennzeichnen.
+- Benutzernamen-Feld: Ein Eingabefeld für den Benutzernamen (username), das erforderlich ist und auf 20 Zeichen begrenzt ist.  
+- Schwierigkeitsgrad: Ein Schieberegler (range) für die Auswahl des Schwierigkeitsgrads mit einem Bereich von 1 bis 3, wobei der aktuelle Wert angezeigt wird.  
+- Farbauswahl: Radiobuttons für die Auswahl der Spielerfarbe (Weiß, Zufällig, Schwarz).
+- Absenden: Eine Schaltfläche zum Absenden des Formulars und Starten des Spiels.
 
 ### imprint.html
-Die Seite  stellt eine rechtskonforme und benutzerfreundliche Impressumsseite für die Chessdestroyer 4000 Webanwendung bereit, die den Nutzern alle erforderlichen rechtlichen Informationen und Kontaktmöglichkeiten bietet.
+Die Seite stellt eine rechtskonforme Impressumsseite für die Chessdestroyer 4000 Webanwendung bereit, die den Nutzern alle erforderlichen rechtlichen Informationen und Kontaktmöglichkeiten bietet.
 
 ### game.html
 Um das Spiel Layout einfacher auf mobilgeräte anpassen zu können, wird hier ein Gridlayout mit einem 2X3 Grid verwendet. Das Spielbrett nimmt ein 2X2 Felder ein, die Beschreibung von Spieler und Gegner jeweils 1 Feld. Um Das Spiel effektiv Centern zu können, besitzt das Grid zwei Parent divs.
