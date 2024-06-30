@@ -25,12 +25,12 @@
 
 <main>
     <div class="container">
-        <form action="/game" method="get">
+        <form action="/game" method="post">
             <div class="card-container">
                 <input type="hidden" name="new_session" value="true">
                 <div class="card">
                     <label for="username">Username</label>
-                    <input type="text" name="username" id="username" minlength="1" placeholder="Username">
+                    <input type="text" name="username" id="username" placeholder="Username" required maxlength="20">
                 </div>
                 <div class="card">
                     <label for="difficulty">Difficulty</label>

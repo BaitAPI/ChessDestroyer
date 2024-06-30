@@ -1,0 +1,65 @@
+<!DOCTYPE HTML>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Game | ChessDestroyer</title>
+        <link rel="stylesheet" href="css/game.css">
+
+        <!-- add Chessboard stylesheet via CDN: -->
+        <link rel="stylesheet"
+              href="https://unpkg.com/@chrisoakman/chessboard2@0.5.0/dist/chessboard2.min.css"
+              integrity="sha384-47VeTDpmy4yT21gKPXQcLQYQZwlmz27gEH5NTrOmTk3G/SGvMyltclOW/Q8uE+sL"
+              crossorigin="anonymous">
+
+    </head>
+    <body>
+        <div class="center">
+            <div class="center-middle">
+                <div class="center-inner grid-container">
+                    <div id="board"></div>
+                    <div id="opponent" class="players">
+                        <h3>Opponent</h3>
+                        <p> <span>Strength:</span> Maggus Reischl</p>
+                    </div>
+                    <div id="player" class="players">
+                        <h3>username</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="game-over-container">
+            <div class="center">
+                <div class="center-middle">
+                    <div class="game-over-content">
+                        <a href="/settings.html">&larr; Go Back and Play again</a>
+                        <h1>Game Over</h1>
+                        <h2 id="over-description">placeholder for nu checker</h2>
+                        <hr>
+                        <h2 id="scoreboard-description">Checkout the Scoreboard:</h2>
+                        <div id="scoreboard">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <input id="hidden-color" type="hidden" value="w">
+
+        <!-- add Chessboard JS via CDN: -->
+        <script src="https://unpkg.com/@chrisoakman/chessboard2@0.5.0/dist/chessboard2.min.js"
+                integrity="sha384-/KwQCjA1GWovZNV3QDVtvSMDzO4reGgarF/RqHipr7hIUElH3r5zNl9WEPPOBRIF"
+                crossorigin="anonymous">
+        </script>
+
+        <!-- add Chess JS via CDN: -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.js"
+                integrity="sha512-oprzqYFJfo4Bx/nNEcSI0xo7ggJrLc+qQ6hrS3zV/Jn0C4dsg4gu+FXW/Vm0jP9CrV7e5e6dcLUYkg3imjfjbw=="
+                crossorigin="anonymous" referrerpolicy="no-referrer">
+        </script>
+
+        <script src="js/game.js" async></script>
+
+    </body>
+</html>
