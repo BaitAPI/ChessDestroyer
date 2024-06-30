@@ -174,7 +174,7 @@ function renderScoreboard(scoreboard) {
 
         scoreboardDescription.textContent = 'Take a look at the Scoreboard:';
     } else {
-        scoreboardDescription.textContent = 'There are no Scores jet.';
+        scoreboardDescription.textContent = 'There are no Scores yet.';
     }
 }
 
