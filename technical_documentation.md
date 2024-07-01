@@ -109,9 +109,9 @@ Im Rahmen der _Instanziierung des Webservers_ mit der Funktion [`rocket`](https:
 ### Routen
 Der Webserver unterstützt _fünf explizit definierte Routen_ sowie eine Route für die _statische Dateibereitstellung_. Die Funktionen der einzelnen Routen werden im Folgenden genauer erläutert:
 1) [GET /](https://github.com/BaitAPI/ChessDestroyer/blob/7eb3514b16b418835f2e9bf7d1071cefaa3fc785/src/main.rs#L28) \
-   Diese Route wird normalerweise als erste aufgerufen und _leitet die Anfrage_ des Clients _permanent_ an die ``[welcome_page.html](https://github.com/BaitAPI/ChessDestroyer/blob/4e2c60c8b8974f907daba23fd298ad0ddb5bc98a/static/welcome_page.html)`` weiter.
+   Diese Route wird normalerweise als erste aufgerufen und _leitet die Anfrage_ des Clients _permanent_ an die [``welcome_page.html``](https://github.com/BaitAPI/ChessDestroyer/blob/4e2c60c8b8974f907daba23fd298ad0ddb5bc98a/static/welcome_page.html) weiter.
 2) [POST /game](https://github.com/BaitAPI/ChessDestroyer/blob/7eb3514b16b418835f2e9bf7d1071cefaa3fc785/src/main.rs#L36) \
-   Diese Route wird üblicherweise über das Formular der ``[settings.html](https://github.com/BaitAPI/ChessDestroyer/blob/4e2c60c8b8974f907daba23fd298ad0ddb5bc98a/static/settings.html)`` aufgerufen und dient der _Erstellung eines Spieles_.\
+   Diese Route wird üblicherweise über das Formular der [``settings.html``](https://github.com/BaitAPI/ChessDestroyer/blob/4e2c60c8b8974f907daba23fd298ad0ddb5bc98a/static/settings.html) aufgerufen und dient der _Erstellung eines Spieles_.\
    Sie muss folgende __Parameter__ beinhalten:
    - ```new_session```: Option\
      Ein _optionaler Parameter_, der angibt, ob eine möglicherweise laufende Sitzung überschrieben werden soll.
@@ -125,9 +125,9 @@ Der Webserver unterstützt _fünf explizit definierte Routen_ sowie eine Route f
    Anfangs überprüft die Route mit `find_session`, ob der Client bereits eine Sitzung hat. Existiert diese und ist der `new_session` Parameter gesetzt, wird diese gelöscht.\
    Dann wird ein _neues Spiel_ mit den vorgegebenen Parametern _generiert_. Dabei wird über die `Game`-Instanz unter anderem ein Unterprozess der Stockfish-Instanz erstellt.\
    Ist das _Spiel erfolgreich erstellt_ worden, wird anschließend eine neue Sitzung, die mit der `Game`-Instanz verknüpft ist, erstellt und im `SessionHandler` gespeichert.\
-   Schließlich wird die ``[game.html](https://github.com/BaitAPI/ChessDestroyer/blob/4e2c60c8b8974f907daba23fd298ad0ddb5bc98a/templates/game.html.hbs)`` über Handlebars _generiert und als Antwort zurückgegeben_, wobei wichtige Informationen, wie die Spielerfarbe und der Nutzername, in das HTML eingefügt werden.
+   Schließlich wird die [``game.html``](https://github.com/BaitAPI/ChessDestroyer/blob/4e2c60c8b8974f907daba23fd298ad0ddb5bc98a/templates/game.html.hbs) über Handlebars _generiert und als Antwort zurückgegeben_, wobei wichtige Informationen, wie die Spielerfarbe und der Nutzername, in das HTML eingefügt werden.
 3) [POST /move](https://github.com/BaitAPI/ChessDestroyer/blob/7eb3514b16b418835f2e9bf7d1071cefaa3fc785/src/main.rs#L92) \
-   Diese Route wird während eines Spiels wiederholt von der ``[game.html](https://github.com/BaitAPI/ChessDestroyer/blob/4e2c60c8b8974f907daba23fd298ad0ddb5bc98a/templates/game.html.hbs)`` aufgerufen, um einen vom Spieler _ausgeführten Zug zu validieren_ und den entsprechenden _Gegenzug der Stockfish-Engine_ zu ermitteln.\
+   Diese Route wird während eines Spiels wiederholt von der [``game.html``](https://github.com/BaitAPI/ChessDestroyer/blob/4e2c60c8b8974f907daba23fd298ad0ddb5bc98a/templates/game.html.hbs) aufgerufen, um einen vom Spieler _ausgeführten Zug zu validieren_ und den entsprechenden _Gegenzug der Stockfish-Engine_ zu ermitteln.\
    Die Anfrage muss folgenden __Body__ haben:
    - ```move```: String
      Ein vierstelliger String, der den _Zug_ beschreibt. Die ersten zwei Zeichen bezeichnen das Quellfeld des Zuges, die letzten beiden das Zielfeld
@@ -136,7 +136,7 @@ Der Webserver unterstützt _fünf explizit definierte Routen_ sowie eine Route f
    Sollte der _Zug ungültig_ sein, wird der letzte _Schachbrettzustand als FEN_ mit einem _406-Statuscode_ zurück an den Client gesendet, um eine Fortsetzung des Spiels mit einem validierten Schachbrett zu ermöglichen.\
    Im weiteren Verlauf berechnet und vollzieht die _Stockfish-Engine_, die der `Game`-Instanz zugeordnet ist, den _Gegenzug_. Der _neue Schachbrettzustand_ wird dann als FEN mit einem _positiven Statuscode_ zurückgegeben.
 4) [GET /game_end](https://github.com/BaitAPI/ChessDestroyer/blob/7eb3514b16b418835f2e9bf7d1071cefaa3fc785/src/main.rs#L64) \
-   Der Aufruf dieser Route erfolgt, wenn der _Client_ auf der ``[game.html](https://github.com/BaitAPI/ChessDestroyer/blob/4e2c60c8b8974f907daba23fd298ad0ddb5bc98a/templates/game.html.hbs)`` _vermutet_, dass das _Spiel beendet_ ist.<br/>
+   Der Aufruf dieser Route erfolgt, wenn der _Client_ auf der [``game.html``](https://github.com/BaitAPI/ChessDestroyer/blob/4e2c60c8b8974f907daba23fd298ad0ddb5bc98a/templates/game.html.hbs) _vermutet_, dass das _Spiel beendet_ ist.<br/>
    Die _Route überprüft_, ob das Spiel tatsächlich beendet ist. Im Fall, dass das Spiel beendet ist, wird ein _200er-Statuscode_ zurückgegeben. Andernfalls wird mit dem _Statuscode 406_ der _letzte Spielzustand als FEN_ zurückgesendet.
 5) [GET /scoreboard](https://github.com/BaitAPI/ChessDestroyer/blob/7eb3514b16b418835f2e9bf7d1071cefaa3fc785/src/main.rs#L117) \
    Der Aufruf dieser Route erfolgt, sobald ein _Spiel beendet_ ist und das _Scoreboard_ geladen werden soll.\
@@ -146,5 +146,5 @@ Der Webserver unterstützt _fünf explizit definierte Routen_ sowie eine Route f
 
    Diese Route öffnet über den ```DB``` Zustand eine _Verbindung zur Datenbank_ und gibt die entsprechenden Einträge, sofern vorhanden, aus. Sie werden als _Liste im JSON-Format_ an den Client übermittelt.
 6) [GET /<document_name>](https://github.com/BaitAPI/ChessDestroyer/blob/7eb3514b16b418835f2e9bf7d1071cefaa3fc785/src/main.rs#L139) \
-   Der Aufruf dieser Route dient dazu, alle _statischen Ressourcen bereitzustellen_, die im Ordner ```static``` vorliegen. Sie wird über den ```FileServer``` instanziiert.\
-   Über diese Route werden insbesondere die ``[welcome_page.html](https://github.com/BaitAPI/ChessDestroyer/blob/4e2c60c8b8974f907daba23fd298ad0ddb5bc98a/static/welcome_page.html)``, die ``[settings.html](https://github.com/BaitAPI/ChessDestroyer/blob/4e2c60c8b8974f907daba23fd298ad0ddb5bc98a/static/settings.html)``, die ```impressum.html``` sowie die zugehörigen CSS- und JS-Dateien bereitgestellt.
+   Der Aufruf dieser Route dient dazu, alle _statischen Ressourcen bereitzustellen_, die im Ordner [``static``](https://github.com/BaitAPI/ChessDestroyer/blob/4e2c60c8b8974f907daba23fd298ad0ddb5bc98a/static) vorliegen. Sie wird über den ```FileServer``` instanziiert.\
+   Über diese Route werden insbesondere die [``welcome_page.html``](https://github.com/BaitAPI/ChessDestroyer/blob/4e2c60c8b8974f907daba23fd298ad0ddb5bc98a/static/welcome_page.html), die [``settings.html``](https://github.com/BaitAPI/ChessDestroyer/blob/4e2c60c8b8974f907daba23fd298ad0ddb5bc98a/static/settings.html), die [``impressum.html``](https://github.com/BaitAPI/ChessDestroyer/blob/4e2c60c8b8974f907daba23fd298ad0ddb5bc98a/static/impressum.html) sowie die zugehörigen CSS- und JS-Dateien bereitgestellt.
