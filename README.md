@@ -30,7 +30,7 @@ cargo run
 Cargo will fetch all the dependencies and start the application.\
 Congratulations! You're now ready to start using the project!
 ## Technical Documentation
-For a deeper understanding of our project, we've prepared a [Technical Documentation](https://github.com/BaitAPI/ChessDestroyer/blob/c41a537ec40a800ac32dac6689eaf8297f867069/technical_documentation.md). Here, you will find insightful details about the design principles we've adopted, the technologies we've used, and our rationale behind certain code implementations. This documentation shall help you grasp a wider view of our project beyond installation and usage.
+For a deeper understanding of our project, we've prepared a [Technical Documentation](https://github.com/BaitAPI/ChessDestroyer/blob/main/technical_documentation.md). Here, you will find insightful details about the design principles we've adopted, the technologies we've used, and our rationale behind certain code implementations. This documentation shall help you grasp a wider view of our project beyond installation and usage.
 ## Contribution
 Contributions, issues and feature requests are welcome! Feel free to check issues page.\
 ### Show your support
