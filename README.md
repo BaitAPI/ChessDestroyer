@@ -6,7 +6,7 @@ The following software is required to be installed on your system:
 - Rust (including cargo)
 - Stockfish
 #### Git Installation
-You can download Git from here: https://git-scm.com/downloads.
+You can download Git from [here](https://git-scm.com/downloads).
 #### Rust and Cargo Installation
 Visit the [official Rust website](https://www.rust-lang.org/tools/install) and follow the instructions to install Rust and Cargo.
 #### Stockfish Installation
