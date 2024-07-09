@@ -160,6 +160,9 @@ function renderScoreboard(scoreboard) {
 
         scoreboard.forEach((entry, index) => {
             const row = document.createElement('tr');
+            if (entry.winner===document.getElementById("player_name").innerText){
+                row.setAttribute("class", "player_entry");
+            }
             [index + 1, entry.winner, entry.score].forEach(text => {
                 const td = document.createElement('td');
                 td.textContent = text;

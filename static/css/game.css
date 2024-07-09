@@ -176,6 +176,10 @@ html {
     background-color: #f9f9f9;
 }
 
+.player_entry {
+    border: red solid 2px;
+}
+
 .scoreboard-table tbody {
     display: block;
     max-height: 300px; /* Adjust height as needed */
