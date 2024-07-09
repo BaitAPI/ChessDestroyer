@@ -21,7 +21,8 @@ impl ScoreEntry {
         }
     }
     fn calc_score(moves: u32, difficulty: &DIFFICULTY) -> f32 {
-        (moves * difficulty.parse_depth()) as f32
+        let score = (difficulty.parse_elo() as f32)*(10./moves as f32);
+        score.round()
     }
 }
 
