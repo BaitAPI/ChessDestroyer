@@ -35,7 +35,7 @@ async fn get() -> Redirect {
 // It takes an optional `new:session` query parameter and `game_settings` form data.
 // It uses `CookieJar` to manage session cookies and a `SessionHandler` to manage the game session.
 #[post("/game", data="<game_settings>")]
-async fn get_game(game_settings: Form<GameSettings>, cookie_jar: &CookieJar<'_>, session_handler: &State<SessionHandler>) -> Response<Template> {
+async fn post_game(game_settings: Form<GameSettings>, cookie_jar: &CookieJar<'_>, session_handler: &State<SessionHandler>) -> Response<Template> {
     if let Some(_) = find_session(cookie_jar, session_handler).await {
         // The user already has a session
         if game_settings.new_session.is_none() {
@@ -137,7 +137,7 @@ fn rocket() -> _ {
     rocket::build()
         .manage(session_handler)
         .manage(db)
-        .mount("/", routes![get_game, post_move, get_game_end, get, get_scoreboard])
+        .mount("/", routes![post_game, post_move, get_game_end, get, get_scoreboard])
         .mount("/", FileServer::from(relative!("/static")))
         .attach(Template::fairing())
 }
