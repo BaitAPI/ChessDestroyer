@@ -158,9 +158,10 @@ function renderScoreboard(scoreboard) {
         });
         thead.appendChild(headerRow);
 
+        const player_name = document.getElementById("player_name").innerText;
         scoreboard.forEach((entry, index) => {
             const row = document.createElement('tr');
-            if (entry.winner===document.getElementById("player_name").innerText){
+            if (entry.winner===player_name){
                 row.setAttribute("class", "player_entry");
             }
             [index + 1, entry.winner, entry.score].forEach(text => {
